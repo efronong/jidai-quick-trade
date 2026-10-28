@@ -1,0 +1,1 @@
+[{"market":"US","name":"Nasdaq / NYSE","tz":"America/New_York","open":"09:30","close":"16:00","pre_open":"04:00","after_close":"20:00","break_start":null,"break_end":null},{"market":"SGX","name":"Singapore Exchange","tz":"Asia/Singapore","open":"09:00","close":"17:00","pre_open":"08:30","after_close":"17:06","break_start":"12:00","break_end":"13:00"}]

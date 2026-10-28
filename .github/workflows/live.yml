@@ -1,0 +1,60 @@
+name: Live prices and site
+
+# Every 10 minutes on weekdays from 08:00 to 05:50 Singapore time (00:00–21:50 UTC):
+# covers SGX (01:00–09:00 UTC) and the US session incl. pre-market (08:00–21:00 UTC).
+on:
+  schedule:
+    - cron: '*/10 0-21 * * 1-5'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Latest daily files (fundamentals, government trades)
+        run: |
+          if git fetch --depth=1 origin data; then git checkout FETCH_HEAD -- d && cp d/*.json data/ && rm -rf d; fi
+      - name: Fetch prices from Yahoo Finance
+        run: python scripts/fetch_yahoo.py
+      - name: Build data files
+        run: |
+          mkdir -p out
+          python scripts/build.py raw/collect.json --prices-only
+      - name: Assemble site
+        run: |
+          python scripts/make_site.py
+          cp -r assets site/
+          mkdir -p site/data
+          cp data/*.json site/data/
+          rm -f site/data/gov_filings.json site/data/gov_meta_cache.json site/data/collect.json site/data/fundamentals.json
+          cp out/stocks.json out/prices.json out/intraday.json out/news.json site/data/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,1037 @@
+<style>
+/* Layout: control deck (clock, style tabs, sector + market) over a top-5 card rail, a big focus chart with forecast fan, then the screener. */
+#dash-root { --dash-gutter: clamp(12px, 2.5vw, 28px); }
+.pr { --ai: #7048e8; --hc: #0c8f80; --fin: #d9480f; --pwr: #b7791f; --def: #1971c2; --nrg: #c92a2a; --x: #c2255c; --sec: var(--ai); font-family: var(--font-anthropic-sans); color: var(--color-fg); display: grid; gap: var(--cds-gap-lg); font-variant-numeric: tabular-nums; }
+.pr * { box-sizing: border-box; }
+.pr button { font: inherit; color: inherit; cursor: pointer; }
+.pr button:focus-visible, .pr a:focus-visible, .pr input:focus-visible { outline: 2px solid var(--sec); outline-offset: 2px; }
+.pr-hero { position: relative; overflow: hidden; border-radius: calc(var(--cds-radius) * 2); padding: var(--cds-pad-xl) var(--cds-pad-xl) var(--cds-pad-lg); background: var(--color-panel); border: 1px solid var(--color-border-line); }
+.pr-hero::before { content: ""; position: absolute; inset: -40% -10% auto auto; width: 70%; height: 180%; background: radial-gradient(closest-side, color-mix(in srgb, var(--sec) 32%, transparent), transparent 70%); pointer-events: none; transition: background var(--cds-dur-slow); }
+.pr-hero::after { content: ""; position: absolute; inset: auto auto -60% -10%; width: 55%; height: 140%; background: radial-gradient(closest-side, color-mix(in srgb, var(--def) 22%, transparent), transparent 70%); pointer-events: none; }
+.pr-hero > * { position: relative; }
+.pr-eyebrow { font-size: var(--cds-font-size-caption); letter-spacing: .08em; text-transform: uppercase; color: var(--color-fg-muted); display: flex; gap: var(--cds-gap-sm); flex-wrap: wrap; align-items: center; }
+.pr-live { display: inline-flex; align-items: center; gap: 6px; }
+.pr-live i { width: 8px; height: 8px; border-radius: 50%; background: var(--color-ok); box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-ok) 60%, transparent); }
+@media (prefers-reduced-motion: no-preference) { .pr-live i { animation: prPulse 2s var(--cds-ease-out) infinite; } }
+@keyframes prPulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-ok) 55%, transparent); } 100% { box-shadow: 0 0 0 10px transparent; } }
+.pr-title { font-family: var(--font-anthropic-sans); font-weight: 800; font-size: clamp(1.8rem, 4vw, 2.6rem); line-height: 1; margin: 6px 0 0; letter-spacing: -.02em; }
+.pr-title span { background: linear-gradient(90deg, var(--ai), var(--x) 35%, var(--fin) 65%, var(--pwr)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.pr-clocks { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: var(--cds-gap-sm); margin-top: var(--cds-pad-lg); }
+.pr-clock { display: grid; grid-template-columns: auto 1fr auto; gap: 2px 12px; align-items: center; padding: 10px 14px; border-radius: var(--cds-radius); background: color-mix(in srgb, var(--color-bg) 70%, transparent); border: 1px solid var(--color-border-line); }
+.pr-clock b { font-weight: 600; }
+.pr-clock .st { font-size: var(--cds-font-size-caption); padding: 2px 8px; border-radius: 99px; font-weight: 600; white-space: nowrap; }
+.st.open { background: color-mix(in srgb, var(--color-ok) 18%, transparent); color: var(--color-ok); }
+.st.pre, .st.lunch { background: color-mix(in srgb, var(--color-warn) 20%, transparent); color: var(--color-warn); }
+.st.closed { background: color-mix(in srgb, var(--color-fg-muted) 15%, transparent); color: var(--color-fg-muted); }
+.pr-clock .hrs { grid-column: 1 / -1; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.pr-clock .cd { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); text-align: right; }
+.pr-events { display: flex; gap: var(--cds-gap-sm); overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.pr-ev { flex: 0 0 auto; max-width: 19rem; padding: 8px 12px; border-radius: var(--cds-radius); border: 1px solid var(--color-border-line); background: var(--color-panel); font-size: var(--cds-font-size-caption); line-height: 1.35; }
+.pr-ev .d { color: var(--color-fg-muted); display: block; }
+.pr-ev b { font-weight: 600; }
+.pr-ev.earn { border-style: dashed; }
+
+.pr-deck { display: grid; gap: var(--cds-gap-md); position: sticky; top: 0; z-index: 4; padding: 10px 0; background: color-mix(in srgb, var(--color-bg) 88%, transparent); backdrop-filter: blur(8px); }
+.pr-tabs { display: flex; gap: 4px; padding: 4px; border-radius: 99px; background: var(--color-panel); border: 1px solid var(--color-border-line); overflow-x: auto; width: fit-content; max-width: 100%; }
+.pr-tab { border: 0; background: transparent; padding: 8px 16px; border-radius: 99px; font-weight: 500; white-space: nowrap; color: var(--color-fg-muted); }
+.pr-tab[aria-selected="true"] { background: var(--sec); color: #fff; box-shadow: 0 4px 14px -6px var(--sec); }
+.pr-filters { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+.pr-chip { border: 1px solid var(--color-border-line); background: var(--color-panel); padding: 6px 12px; border-radius: 99px; display: inline-flex; align-items: center; gap: 8px; font-size: var(--cds-font-size-caption); font-weight: 500; }
+.pr-chip i { width: 9px; height: 9px; border-radius: 50%; background: var(--c); }
+.pr-chip[aria-pressed="true"] { border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, var(--color-panel)); }
+.pr-sep { width: 1px; height: 22px; background: var(--color-border-line); }
+.pr-mkt[aria-pressed="true"] { --c: var(--color-fg); border-color: var(--color-fg); }
+
+
+.pr-h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.pr-h2 small { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-weight: 400; }
+.pr-sec { display: grid; gap: var(--cds-gap-md); }
+.pr-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 13.5rem), 1fr)); grid-auto-rows: 1fr; gap: var(--cds-gap-sm); min-height: 15rem; }
+.pr-card { min-width: 0; width: 100%; position: relative; text-align: left; border: 1px solid var(--color-border-line); background: var(--color-panel); border-radius: calc(var(--cds-radius) * 1.5); padding: 14px; display: grid; gap: 8px; align-content: start; transition: transform var(--cds-dur-slow) var(--cds-ease-out), border-color var(--cds-dur-slow); overflow: hidden; }
+.pr-card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--sec) 60%, var(--color-border-line)); }
+.pr-card[aria-pressed="true"] { border-color: var(--sec); box-shadow: 0 10px 28px -16px var(--sec), inset 0 0 0 1px var(--sec); }
+.pr-card .top > div { min-width: 0; }
+.pr-card .top { display: flex; justify-content: space-between; align-items: start; gap: 8px; }
+.pr-rank { font-family: var(--font-anthropic-serif); font-size: 2rem; line-height: .9; color: var(--sec); }
+.pr-tk { font-weight: 700; font-size: 1.05rem; letter-spacing: .01em; }
+.pr-nm { font-size: var(--cds-font-size-caption); line-height: 1.3; color: var(--color-fg-muted); white-space: normal; overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; min-height: 2.6em; }
+.pr-px { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.pr-px strong { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 1.25rem; }
+.pill { font-size: var(--cds-font-size-caption); font-weight: 600; padding: 1px 7px; border-radius: 99px; }
+.up { color: var(--color-ok); } .dn { color: var(--color-bad); }
+.pill.up { background: color-mix(in srgb, var(--color-ok) 15%, transparent); } .pill.dn { background: color-mix(in srgb, var(--color-bad) 14%, transparent); }
+.pr-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.tag { font-size: 11px; padding: 2px 7px; border-radius: 99px; border: 1px solid var(--color-border-line); color: var(--color-fg-muted); white-space: nowrap; }
+.tag.conv-High { color: var(--color-ok); border-color: color-mix(in srgb, var(--color-ok) 45%, transparent); }
+.tag.conv-Speculative { color: var(--color-warn); border-color: color-mix(in srgb, var(--color-warn) 45%, transparent); }
+.tag.ser { color: #fff; background: linear-gradient(90deg, var(--ai), var(--x)); border: 0; }
+.pr-spark { height: 40px; width: 100%; display: block; }
+.pr-exp { display: grid; gap: 4px; }
+.pr-exp .lbl { display: flex; justify-content: space-between; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.pr-exp .lbl b { color: var(--color-fg); font-weight: 600; }
+.pr-range { position: relative; margin: 0 7px; height: 8px; border-radius: 99px; background: color-mix(in srgb, var(--color-fg-muted) 14%, transparent); }
+.pr-range .band { position: absolute; top: 0; bottom: 0; border-radius: 99px; background: linear-gradient(90deg, color-mix(in srgb, var(--color-bad) 70%, transparent), color-mix(in srgb, var(--sec) 70%, transparent) 50%, color-mix(in srgb, var(--color-ok) 80%, transparent)); }
+.pr-range .zero { position: absolute; top: -3px; bottom: -3px; width: 1px; background: var(--color-fg-muted); }
+.pr-range .base { position: absolute; top: -4px; width: 14px; height: 16px; margin-left: -7px; border-radius: 4px; background: var(--color-bg); border: 2px solid var(--sec); }
+
+.pr-focus { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: var(--cds-gap-md); }
+@media (max-width: 860px) { .pr-focus { grid-template-columns: minmax(0, 1fr); } }
+.pr-panel { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+.pr-fhead { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: end; }
+.pr-fhead .big { font-family: var(--font-anthropic-serif); font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1; }
+.pr-fhead .who { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.pr-ranges { display: flex; gap: 2px; flex-wrap: wrap; }
+.pr-ranges button { border: 0; background: transparent; padding: 4px 9px; border-radius: 6px; font-size: var(--cds-font-size-caption); font-weight: 600; color: var(--color-fg-muted); }
+.pr-ranges button[aria-pressed="true"] { background: color-mix(in srgb, var(--sec) 18%, transparent); color: var(--sec); }
+.pr-chart { position: relative; min-height: 320px; margin-top: 10px; }
+.pr-chart svg { display: block; overflow: visible; }
+.pr-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 3; }
+.pr-tip .d { color: var(--cds-text-secondary); }
+.pr-legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-top: 6px; }
+.pr-legend i { display: inline-block; width: 18px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.pr-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; margin: 0; }
+.pr-stats div { display: grid; gap: 1px; border-bottom: 1px solid var(--color-border-line); padding-bottom: 6px; }
+.pr-stats dt { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--color-fg-muted); }
+.pr-stats dd { margin: 0; font-weight: 600; }
+.pr-why { display: grid; gap: 10px; margin-top: 14px; font-size: var(--cds-font-size-body); line-height: 1.5; }
+.pr-why p { margin: 0; }
+.pr-why .k { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--color-fg-muted); }
+.pr-news { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 8px; font-size: var(--cds-font-size-caption); }
+.pr-news a { color: var(--color-fg); text-decoration: none; border-bottom: 1px solid color-mix(in srgb, var(--sec) 40%, transparent); }
+.pr-news span { color: var(--color-fg-muted); display: block; }
+
+.pr-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
+.pr-x { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 12px; }
+.pr-x li { display: grid; gap: 6px; padding-left: 12px; border-left: 3px solid; border-image: linear-gradient(var(--ai), var(--x)) 1; font-size: var(--cds-font-size-body); line-height: 1.45; }
+.pr-x .meta { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.pr-x .tk { border: 1px solid var(--color-border-line); background: transparent; border-radius: 6px; padding: 0 6px; font-size: 11px; font-weight: 600; }
+.pr-style-note { margin: -4px 0 0; max-width: 75ch; line-height: 1.5; color: var(--color-fg-muted); }
+.pr-style-note b { color: var(--color-fg); }
+.pr-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 4px 0 0; }
+
+.pr-tablebox { max-height: 30rem; overflow: auto; border-radius: var(--cds-radius); }
+.pr-table { width: 100%; border-collapse: collapse; font-size: var(--cds-font-size-caption); min-width: 640px; }
+.pr-table th { position: sticky; top: 0; background: var(--color-panel); text-align: right; padding: 0; border-bottom: 1px solid var(--color-border-line); z-index: 1; }
+.pr-table th button { border: 0; background: transparent; width: 100%; text-align: inherit; padding: 8px; font-weight: 600; color: var(--color-fg-muted); white-space: nowrap; }
+.pr-table th:first-child, .pr-table td:first-child, .pr-table th.l, .pr-table td.l { text-align: left; }
+.pr-table td { padding: 7px 8px; border-bottom: 1px solid var(--color-border-line); text-align: right; white-space: nowrap; }
+.pr-table tbody tr { cursor: pointer; }
+.pr-table tbody tr:hover { background: color-mix(in srgb, var(--sec) 7%, transparent); }
+.pr-table tr.sel { background: color-mix(in srgb, var(--sec) 12%, transparent); }
+.pr-table td.nm { max-width: 14rem; overflow: hidden; text-overflow: ellipsis; color: var(--color-fg-muted); }
+.pr-bar { display: inline-block; height: 6px; border-radius: 3px; vertical-align: middle; margin-left: 6px; }
+.pr-search { border: 1px solid var(--color-border-line); background: var(--color-bg); color: var(--color-fg); border-radius: 99px; padding: 6px 12px; font: inherit; font-size: var(--cds-font-size-caption); min-width: 0; width: 14rem; max-width: 100%; }
+.pr-method { max-width: 72ch; display: grid; gap: 12px; line-height: 1.6; }
+.pr-method h3 { margin: 10px 0 0; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); }
+.pr-method p, .pr-method li { margin: 0; }
+.pr-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr)); gap: var(--cds-gap-sm); }
+.pr-kpi { padding: 12px 14px; border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); background: var(--color-panel); }
+.pr-kpi span { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); display: block; }
+.pr-kpi strong { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: 1.6rem; }
+.pr-empty { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); padding: 20px 0; }
+.pr-fail { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); min-height: inherit; }
+.pr-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+@font-face { font-family: 'Roboto'; font-style: normal; font-weight: 400; font-display: swap; src: url(/_blob/985a07612c31de3a2714640dd348a4ec) format('woff2'); }
+@font-face { font-family: 'Roboto'; font-style: normal; font-weight: 500; font-display: swap; src: url(/_blob/054c4ccdcd285428e5b39df0e1f90725) format('woff2'); }
+@font-face { font-family: 'Roboto'; font-style: normal; font-weight: 700; font-display: swap; src: url(/_blob/a4e543e5fa1372544446dbb06322b828) format('woff2'); }
+.pr { --num: 'Roboto', var(--font-anthropic-sans), system-ui, sans-serif; }
+.pr-px strong, .pill, .pr-exp .lbl, .pr-rank, .pr-fhead .big, .pr-pt .v strong, .pr-kpi strong, .pr-table td, .pr-stats dd, .pr-chart svg text, .pr-clock .cd, .pr-clock .hrs, .pr-tip, .pr-legend b, .pr-ev .d, #asof { font-family: var(--num); }
+.pr-px strong, .pr-fhead .big, .pr-pt .v strong, .pr-kpi strong { font-weight: 500; letter-spacing: -.01em; }
+.pr-rank { font-weight: 700; }
+
+.pr-board { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr)); gap: var(--cds-gap-sm); }
+.pr-pt { position: relative; overflow: hidden; padding: 12px 14px; border-radius: calc(var(--cds-radius) * 1.5); border: 1px solid color-mix(in srgb, var(--c) 35%, var(--color-border-line)); background: linear-gradient(140deg, color-mix(in srgb, var(--c) 22%, var(--color-panel)), color-mix(in srgb, var(--c) 6%, var(--color-panel))); display: grid; gap: 6px; cursor: pointer; text-align: left; transition: transform var(--cds-dur-slow) var(--cds-ease-out); }
+.pr-pt:hover { transform: translateY(-2px); }
+.pr-pt[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: #fff; box-shadow: 0 10px 24px -14px var(--c); }
+.pr-pt[aria-pressed="true"] .n, .pr-pt[aria-pressed="true"] .v span, .pr-pt[aria-pressed="true"] strong { color: #fff !important; }
+.pr-pt .n { font-size: var(--cds-font-size-caption); font-weight: 700; display: flex; align-items: center; gap: 6px; color: var(--color-fg); }
+.pr-pt .ic { font-size: 1.1rem; line-height: 1; }
+.pr-pt .v { display: flex; gap: 10px; align-items: baseline; }
+.pr-pt .v span { font-size: 11px; color: var(--color-fg-muted); }
+.pr-pt .v strong { font-size: 1.15rem; }
+.pr-heat { font-variant-numeric: tabular-nums; border-radius: 6px; }
+.pr-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--cds-gap-sm); }
+.pr-step { border-radius: calc(var(--cds-radius) * 1.5); padding: 14px; background: linear-gradient(150deg, color-mix(in srgb, var(--c) 20%, var(--color-panel)), var(--color-panel)); border: 1px solid color-mix(in srgb, var(--c) 35%, var(--color-border-line)); display: grid; gap: 6px; align-content: start; }
+.pr-step .no { width: 28px; height: 28px; border-radius: 50%; background: var(--c); color: #fff; display: grid; place-items: center; font-weight: 700; font-family: var(--num); }
+.pr-step b { font-size: var(--cds-font-size-body); }
+.pr-step p { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.45; }
+.pr-formula { font-family: var(--num); padding: 12px 14px; border-radius: var(--cds-radius); background: color-mix(in srgb, var(--sec) 10%, var(--color-panel)); border: 1px dashed color-mix(in srgb, var(--sec) 50%, transparent); line-height: 1.7; font-size: var(--cds-font-size-caption); }
+.pr-why .blk { border-left: 4px solid var(--c); padding: 6px 10px; border-radius: 0 var(--cds-radius) var(--cds-radius) 0; background: color-mix(in srgb, var(--c) 9%, transparent); }
+.pr-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 5px; background: linear-gradient(90deg, var(--sec), color-mix(in srgb, var(--sec) 40%, var(--x))); }
+.pr-rank { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--sec); color: #fff !important; font-size: 1.05rem !important; line-height: 1 !important; box-shadow: 0 6px 14px -8px var(--sec); }
+
+.gv { --g1: var(--def); --g2: var(--x); }
+.gv-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: end; }
+.gv-head .pr-h2 { font-size: 1.35rem; font-weight: 700; background: linear-gradient(90deg, var(--g1), var(--g2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.gv-filters { display: flex; flex-wrap: wrap; gap: 8px 14px; }
+.gv-grp { display: inline-flex; align-items: center; gap: 2px; padding: 3px; border-radius: 99px; background: var(--color-panel); border: 1px solid var(--color-border-line); }
+.gv-grp span { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--color-fg-muted); padding: 0 8px; }
+.gv-grp button { border: 0; background: transparent; padding: 5px 11px; border-radius: 99px; font-size: var(--cds-font-size-caption); font-weight: 600; color: var(--color-fg-muted); }
+.gv-grp button[aria-pressed="true"] { background: linear-gradient(90deg, var(--g1), var(--g2)); color: #fff; }
+.gv-cards .pr-kpi { background: linear-gradient(150deg, color-mix(in srgb, var(--c) 18%, var(--color-panel)), var(--color-panel)); border-color: color-mix(in srgb, var(--c) 35%, var(--color-border-line)); }
+.gv-cards .pr-kpi strong { display: block; font-size: 1.7rem; color: var(--c); }
+.gv-cards .pr-kpi em { font-style: normal; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.gv-h3 { margin: 0 0 8px; font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.gv-h3 small { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-weight: 400; }
+.gv-bars { position: relative; min-height: 420px; }
+.gv-bars svg { display: block; overflow: visible; }
+.gv-bars .row { cursor: pointer; }
+.gv-bars .row:hover .bar, .gv-bars .row.sel .bar { filter: brightness(1.12); }
+.gv-bars .row.sel .bar { stroke: var(--color-fg); stroke-width: 1.5; }
+.gv-table tbody tr.sel { background: color-mix(in srgb, var(--g1) 12%, transparent); }
+.gv-table td.l { text-align: left; }
+.gv-score { display: inline-block; min-width: 2.4em; text-align: center; padding: 2px 8px; border-radius: 99px; color: #fff; font-weight: 700; background: linear-gradient(90deg, var(--g1), var(--g2)); }
+.gv-off { display: grid; gap: 10px; max-height: 26rem; overflow: auto; }
+.gv-o { border-left: 4px solid var(--c); padding: 6px 10px; border-radius: 0 var(--cds-radius) var(--cds-radius) 0; background: color-mix(in srgb, var(--c) 8%, transparent); display: grid; gap: 4px; }
+.gv-o .t { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.gv-o .t b { font-size: var(--cds-font-size-body); }
+.gv-o .t span { font-size: 11px; color: var(--color-fg-muted); }
+.gv-o ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; font-size: var(--cds-font-size-caption); font-family: var(--num); }
+.gv-o li { display: flex; gap: 8px; flex-wrap: wrap; align-items: baseline; }
+.gv-o li a { color: var(--color-fg); }
+.gv-src { margin: 10px 0 0; padding-left: 18px; font-size: var(--cds-font-size-caption); line-height: 1.6; }
+.gv-src a { color: var(--color-fg); }
+.gv-empty { display: grid; place-items: center; min-height: 200px; text-align: center; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); padding: 20px; }
+
+/* ---------- mobile layout (set by script from screen size and touch input) ---------- */
+.pr-bnav { display: none; }
+.pr[data-device="mobile"] { gap: var(--cds-gap-md); }
+.pr[data-device="mobile"] .pr-hero { padding: 14px 14px 12px; border-radius: 16px; }
+.pr[data-device="mobile"] .pr-title { font-size: 1.55rem; }
+.pr[data-device="mobile"] .pr-eyebrow { font-size: 11px; }
+.pr[data-device="mobile"] .pr-clocks { grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 10px; }
+.pr[data-device="mobile"] .pr-clock { grid-template-columns: 1fr auto; padding: 8px 10px; gap: 2px 6px; }
+.pr[data-device="mobile"] .pr-clock b { font-size: 12px; grid-column: 1 / -1; }
+.pr[data-device="mobile"] .pr-clock .cd { grid-column: 1 / -1; text-align: left; font-size: 11px; }
+.pr[data-device="mobile"] .pr-clock .hrs { font-size: 10.5px; }
+.pr[data-device="mobile"] .pr-board { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 8px; padding-bottom: 4px; scrollbar-width: none; }
+.pr[data-device="mobile"] .pr-board::-webkit-scrollbar, .pr[data-device="mobile"] .pr-cards::-webkit-scrollbar { display: none; }
+.pr[data-device="mobile"] .pr-pt { flex: 0 0 8.6rem; scroll-snap-align: start; padding: 10px 12px; }
+.pr[data-device="mobile"] .pr-deck { padding: 6px 0; }
+.pr[data-device="mobile"] .pr-tabs, .pr[data-device="mobile"] .pr-filters [data-sector], .pr[data-device="mobile"] .pr-sep { display: none; }
+.pr[data-device="mobile"] .pr-filters { justify-content: flex-start; }
+.pr[data-device="mobile"] .pr-cards { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; min-height: 0; padding-bottom: 6px; scrollbar-width: none; grid-auto-rows: auto; }
+.pr[data-device="mobile"] .pr-card { flex: 0 0 80%; scroll-snap-align: center; }
+.pr[data-device="mobile"] .pr-card:hover { transform: none; }
+.pr[data-device="mobile"] .pr-panel { padding: 12px; }
+.pr[data-device="mobile"] .pr-chart { min-height: 240px; }
+.pr[data-device="mobile"] .pr-ranges { flex-wrap: nowrap; overflow-x: auto; width: 100%; }
+.pr[data-device="mobile"] .pr-ranges button { padding: 6px 10px; }
+.pr[data-device="mobile"] .pr-fhead .big { font-size: 1.6rem; }
+.pr[data-device="mobile"] .pr-table { min-width: 0; }
+.pr[data-device="mobile"] #scr-table th:nth-child(2), .pr[data-device="mobile"] #scr-table td:nth-child(2),
+.pr[data-device="mobile"] #scr-table th:nth-child(6), .pr[data-device="mobile"] #scr-table td:nth-child(6),
+.pr[data-device="mobile"] #scr-table th:nth-child(8), .pr[data-device="mobile"] #scr-table td:nth-child(8) { display: none; }
+.pr[data-device="mobile"] .gv-table th:nth-child(2), .pr[data-device="mobile"] .gv-table td:nth-child(2),
+.pr[data-device="mobile"] .gv-table th:nth-child(6), .pr[data-device="mobile"] .gv-table td:nth-child(6),
+.pr[data-device="mobile"] .gv-table th:nth-child(7), .pr[data-device="mobile"] .gv-table td:nth-child(7) { display: none; }
+.pr[data-device="mobile"] #ipo-table th:nth-child(2), .pr[data-device="mobile"] #ipo-table td:nth-child(2),
+.pr[data-device="mobile"] #ipo-table th:nth-child(4), .pr[data-device="mobile"] #ipo-table td:nth-child(4) { display: none; }
+.pr[data-device="mobile"] .pr-table td, .pr[data-device="mobile"] .pr-table th button { padding: 8px 6px; }
+.pr[data-device="mobile"] .gv-filters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+.pr[data-device="mobile"] .gv-grp { flex: 0 0 auto; }
+.pr[data-device="mobile"] .gv-bars { min-height: 0; }
+.pr[data-device="mobile"] .pr-kpis { grid-template-columns: 1fr 1fr; }
+.pr[data-device="mobile"] .gv-cards .pr-kpi strong { font-size: 1.35rem; }
+.pr[data-device="mobile"] .pr-steps { grid-template-columns: 1fr; }
+.pr[data-device="mobile"] .pr-bnav { display: grid; grid-template-columns: repeat(6, 1fr); position: relative; gap: 2px; padding: 3px; border-radius: 14px; background: var(--color-panel); border: 1px solid var(--color-border-line); }
+.pr-bnav > button { border: 0; background: transparent; display: grid; justify-items: center; gap: 1px; padding: 4px 0; font-size: 10.5px; font-weight: 600; color: var(--color-fg-muted); border-radius: 11px; min-height: 44px; }
+.pr-bnav .bi { font-size: 17px; line-height: 1; }
+.pr-bnav > button[aria-current="true"] { color: #fff; background: linear-gradient(140deg, var(--sec), color-mix(in srgb, var(--sec) 55%, var(--x))); }
+.pr-more { position: absolute; right: 4px; top: calc(100% + 6px); z-index: 25; display: grid; gap: 4px; padding: 6px; border-radius: 14px; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); box-shadow: var(--cds-shadow-popover); }
+.pr-more button { border: 0; background: transparent; text-align: left; padding: 10px 14px; border-radius: 10px; font-weight: 600; }
+.pr-more button[aria-current="true"] { background: color-mix(in srgb, var(--sec) 16%, transparent); }
+[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+@media (prefers-reduced-motion: no-preference) {
+  .pr-card.in { animation: prIn var(--cds-dur-slow) var(--cds-ease-out) both; }
+  @keyframes prIn { from { opacity: .3; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+}
+</style>
+
+<div class="pr" id="radar">
+  <header class="pr-hero" id="top" data-source="stocks markets">
+    <div class="pr-eyebrow"><span class="pr-live"><i></i><span id="asof" class="dash-skeleton">—</span></span><span>US · SGX · 6 sectors</span></div>
+    <h1 class="pr-title"><span>JIDAI</span> Quick Trade</h1>
+    <div class="pr-clocks" id="clocks" data-source="markets"></div>
+  </header>
+
+  <div class="pr-events" id="events" data-source="events stocks" aria-label="This week's market events"></div>
+
+  <section class="pr-board" id="pulse" data-source="sector_pulse" aria-label="Sectors"></section>
+
+  <nav class="pr-deck" aria-label="View">
+    <div class="pr-tabs" role="tablist" id="tabs">
+      <button class="pr-tab" role="tab" id="tab-long" data-style="long">Long-term</button>
+      <button class="pr-tab" role="tab" id="tab-swing" data-style="swing">Swing</button>
+      <button class="pr-tab" role="tab" id="tab-intraday" data-style="intraday">Intraday</button>
+      <button class="pr-tab" role="tab" id="tab-ipo" data-style="ipo">IPOs</button>
+      <button class="pr-tab" role="tab" id="tab-gov" data-style="gov">Gov Trades</button>
+      <button class="pr-tab" role="tab" id="tab-history" data-style="history">Pick history</button>
+      <button class="pr-tab" role="tab" id="tab-method" data-style="method">How forecasts work</button>
+    </div>
+  <div class="pr-bnav" id="bnav" role="tablist" aria-label="Sections">
+      <button data-style="long"><span class="bi">◆</span>Long</button>
+      <button data-style="swing"><span class="bi">⇅</span>Swing</button>
+      <button data-style="intraday"><span class="bi">◷</span>Day</button>
+      <button data-style="ipo"><span class="bi">✦</span>IPO</button>
+      <button data-style="gov"><span class="bi">⚑</span>Gov</button>
+      <button data-more="1" aria-haspopup="true"><span class="bi">≡</span>More</button>
+      <div class="pr-more" id="bmore" hidden><button data-style="history">Pick history</button><button data-style="method">How forecasts work</button></div>
+    </div>
+    <div class="pr-filters" id="filters">
+      <button class="pr-chip" data-sector="ai" style="--c: var(--ai)"><i></i>AI &amp; Chips</button>
+      <button class="pr-chip" data-sector="hc" style="--c: var(--hc)"><i></i>Health</button>
+      <button class="pr-chip" data-sector="fin" style="--c: var(--fin)"><i></i>Finance</button>
+      <button class="pr-chip" data-sector="pwr" style="--c: var(--pwr)"><i></i>Power &amp; Grid</button>
+      <button class="pr-chip" data-sector="def" style="--c: var(--def)"><i></i>Defence</button>
+      <button class="pr-chip" data-sector="nrg" style="--c: var(--nrg)"><i></i>Energy</button>
+      <span class="pr-sep" aria-hidden="true"></span>
+      <button class="pr-chip pr-mkt" data-market="US">US</button>
+      <button class="pr-chip pr-mkt" data-market="SGX">SGX</button>
+    </div>
+  </nav>
+
+  <section class="pr-sec" id="picks-sec">
+    <h2 class="pr-h2" id="picks-title">Top 5 <small id="picks-sub"></small></h2>
+    <p class="pr-style-note" id="style-note"></p>
+    <div class="pr-cards" id="cards" data-source="picks stocks prices"></div>
+  </section>
+
+  <section class="pr-focus" id="focus">
+    <div class="pr-panel" id="chart-card" data-source="prices intraday stocks picks">
+      <div class="pr-fhead">
+        <div><div class="who" id="f-who"></div><div class="big" id="f-price">—</div><div id="f-chg"></div></div>
+        <div class="pr-ranges" id="ranges" role="group" aria-label="Chart range">
+          <button data-r="1D">1D</button><button data-r="5D">5D</button><button data-r="1M">1M</button><button data-r="3M">3M</button><button data-r="6M">6M</button><button data-r="YTD">YTD</button><button data-r="1Y">1Y</button><button data-r="5Y">5Y</button>
+        </div>
+      </div>
+      <div class="pr-chart" id="chart"></div>
+      <div class="pr-legend" id="legend"></div>
+    </div>
+    <aside class="pr-panel" id="detail" data-source="stocks picks news">
+      <dl class="pr-stats" id="stats"></dl>
+      <div class="pr-why" id="why"></div>
+      <ul class="pr-news" id="newslist"></ul>
+    </aside>
+  </section>
+
+  <section class="pr-sec" id="ipo-sec" hidden>
+    <h2 class="pr-h2">IPO calendar <small>Return since IPO price</small></h2>
+    <div class="pr-panel"><div class="pr-tablebox"><table class="pr-table" id="ipo-table" data-source="ipos" data-row-key="sym">
+      <thead><tr><th data-field="sym"><button>Ticker</button></th><th class="l" data-field="name"><button>Company</button></th><th data-field="status"><button>Status</button></th><th data-field="ipo_date"><button>IPO date</button></th><th data-field="ipo_price"><button>IPO price</button></th><th data-field="price"><button>Price</button></th><th data-field="since_ipo"><button>Since IPO</button></th><th data-field="chg_1d"><button>Today</button></th></tr></thead><tbody></tbody></table></div></div>
+  </section>
+
+  <template id="gov-tpl">
+  <section class="pr-sec gv" id="gov-sec">
+    <div class="gv-head">
+      <div><h2 class="pr-h2">Top 10 Government-Traded Stocks</h2>
+      <p class="pr-note" id="gv-asof">Personal stock trades that US officials have publicly disclosed.</p></div>
+    </div>
+    <div class="gv-filters" id="gv-filters" data-source="gov_sources">
+      <div class="gv-grp" role="group" aria-label="Time period"><span>Period</span><button data-gk="period" data-gv="7">7D</button><button data-gk="period" data-gv="30">30D</button><button data-gk="period" data-gv="90">90D</button><button data-gk="period" data-gv="180">180D</button><button data-gk="period" data-gv="365">1Y</button></div>
+      <div class="gv-grp" role="group" aria-label="Officials"><span>Officials</span><button data-gk="who" data-gv="all">All</button><button data-gk="who" data-gv="trump">Trump</button><button data-gk="who" data-gv="house">House</button><button data-gk="who" data-gv="senate">Senate</button></div>
+      <div class="gv-grp" role="group" aria-label="Transaction type"><span>Type</span><button data-gk="side" data-gv="buy">Purchases</button><button data-gk="side" data-gv="sell">Sales</button><button data-gk="side" data-gv="both">Both</button></div>
+      <div class="gv-grp" role="group" aria-label="Exchange"><span>Exchange</span><button data-gk="ex" data-gv="nasdaq">NASDAQ</button><button data-gk="ex" data-gv="all">All US</button></div>
+    </div>
+    <div class="pr-kpis gv-cards" id="gv-cards" data-source="gov_trades"></div>
+    <div class="pr-panel" id="gv-chart-card" data-source="gov_trades gov_stocks">
+      <h3 class="gv-h3">Government Trading Score <small id="gv-chart-sub"></small></h3>
+      <div id="gv-bars" class="gv-bars"></div>
+    </div>
+    <div class="pr-panel" id="gv-table-card" data-source="gov_trades gov_stocks">
+      <div class="pr-tablebox"><table class="pr-table gv-table" id="gv-table"><thead><tr><th>Rank</th><th class="l">Stock</th><th class="l">Ticker</th><th>Distinct buyers</th><th>Latest transaction</th><th>Latest disclosure</th><th>Price</th><th>Score</th></tr></thead><tbody></tbody></table></div>
+    </div>
+    <div class="pr-focus" id="gv-detail">
+      <div class="pr-panel" id="gv-price-card" data-source="gov_prices gov_trades gov_stocks">
+        <div class="pr-fhead"><div><div class="who" id="gv-who"></div><div class="big" id="gv-price">—</div><div id="gv-chg"></div></div></div>
+        <div class="pr-chart" id="gv-chart"></div>
+        <div class="pr-legend"><span><i style="background:var(--color-ok)"></i>Purchase (transaction date)</span><span><i style="background:var(--color-bad)"></i>Sale</span><span>Price: daily close, last 12 months</span></div>
+      </div>
+      <aside class="pr-panel" id="gv-officials" data-source="gov_trades">
+        <h3 class="gv-h3">Who traded it <small id="gv-off-sub"></small></h3>
+        <div id="gv-off-list" class="gv-off"></div>
+      </aside>
+    </div>
+    <div class="pr-panel gv-notes" id="gv-notes" data-source="gov_sources">
+      <h3 class="gv-h3">How the score works</h3>
+      <div class="pr-formula"><b>Government Trading Score (0–100)</b> = <b>40</b> × distinct officials (capped at 5) + <b>25</b> × recency of the latest transaction in the period + <b>15</b> × separate buying occasions (official + day, capped at 10) + <b>20</b> × share of trades that were purchases<br>Duplicate and amended filings are merged first, so one trade counted in two filings counts once. Raw transaction counts are not used.</div>
+      <ul class="gv-src" id="gv-src"></ul>
+      <p class="pr-note">These are personal transactions that officials disclosed (their own, a spouse's or a family account), not investments made by the US government. Transaction dates and disclosure dates differ: Congress members have up to 45 days to report, and executive-branch reports can arrive later. Disclosed trading does not predict future returns. To load newer data, an editor can replace the “Government trades” file in Sources with a JSON file in the same columns.</p>
+    </div>
+  </section>
+  </template>
+  <div id="gov-mount" hidden></div>
+
+  <section class="pr-sec" id="history-sec" hidden>
+    <h2 class="pr-h2">Pick history <small>How past picks did</small></h2>
+    <div class="pr-kpis" id="hist-kpis" data-source="pick_returns"></div>
+    <div class="pr-panel"><div class="pr-tablebox"><table class="pr-table" id="hist-table" data-source="pick_returns" data-row-key="id">
+      <thead><tr><th data-field="picked"><button>Picked</button></th><th class="l" data-field="style"><button>Style</button></th><th class="l" data-field="sector"><button>Sector</button></th><th data-field="rank"><button>Rank</button></th><th class="l" data-field="sym"><button>Ticker</button></th><th data-field="price_at_pick"><button>Price then</button></th><th data-field="price_now"><button>Price now</button></th><th data-field="since_pick"><button>Since pick</button></th><th data-field="exp_base"><button>Expected</button></th><th class="l" data-field="horizon"><button>Horizon</button></th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+
+  <section class="pr-sec" id="method-sec" hidden>
+    <h2 class="pr-h2">How the forecast works</h2>
+    <div class="pr-steps">
+      <div class="pr-step" style="--c: var(--ai)"><span class="no">1</span><b>Collect</b><p>Prices, volume, analyst targets, earnings dates and headlines for 170+ stocks, twice a day.</p></div>
+      <div class="pr-step" style="--c: var(--x)"><span class="no">2</span><b>Read the news</b><p>Market news plus @aleabitoreddit's supply-chain posts on X.</p></div>
+      <div class="pr-step" style="--c: var(--def)"><span class="no">3</span><b>Score</b><p>Growth, valuation, trend, oversold/overbought (RSI) and upcoming catalysts.</p></div>
+      <div class="pr-step" style="--c: var(--hc)"><span class="no">4</span><b>Forecast</b><p>A base case plus bear and bull cases over each style's time frame.</p></div>
+      <div class="pr-step" style="--c: var(--fin)"><span class="no">5</span><b>Track</b><p>Every pick is logged so you can check how it did later.</p></div>
+    </div>
+    <div class="pr-formula"><b>Base case</b> = analyst target upside × trust factor ± momentum ± news/catalyst adjustment<br><b>Bear / bull range</b> = based on how much the stock normally moves (its volatility) over the time frame<br><b>Time frames</b> · Long-term 12 months · Swing 4 weeks · Intraday to the close · IPO 6 months</div>
+    <p class="pr-note">Research to support your own decisions, not financial advice. Forecasts are estimates; small and new stocks can move far outside the range.</p>
+  </section>
+
+  <section class="pr-two" id="lower">
+    <div class="pr-panel" id="xfeed" data-source="news">
+      <h2 class="pr-h2">@aleabitoreddit <small>on X</small></h2>
+      <ul class="pr-x" id="xlist"></ul>
+    </div>
+    <div class="pr-panel" id="screener-card">
+      <div class="pr-fhead"><h2 class="pr-h2">Screener <small id="scr-sub"></small></h2><input class="pr-search" id="search" type="search" placeholder="Search ticker or name" aria-label="Search stocks"></div>
+      <div class="pr-tablebox" style="margin-top:10px"><table class="pr-table" id="scr-table" data-source="stocks" data-row-key="sym">
+        <thead><tr><th data-field="sym"><button>Ticker</button></th><th class="l" data-field="name"><button>Name</button></th><th data-field="price"><button>Price</button></th><th data-field="chg_1d"><button>1D</button></th><th data-field="ret_1m"><button>1M</button></th><th data-field="ret_ytd"><button>YTD</button></th><th data-field="ret_1y"><button>1Y</button></th><th data-field="rsi14"><button>RSI</button></th><th data-field="target_upside"><button>To target</button></th></tr></thead><tbody></tbody></table></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+const SECT = { ai: 'AI & Chips', hc: 'Health', fin: 'Finance', pwr: 'Power & Grid', def: 'Defence', nrg: 'Energy' };
+const SECS = ['ai', 'hc', 'fin', 'pwr', 'def', 'nrg'];
+const ICON = { ai: '◆', hc: '✚', fin: '$', pwr: 'ϟ', def: '⛨', nrg: '▲' };
+const STYLE = { long: 'Long-term', swing: 'Swing', intraday: 'Intraday', ipo: 'IPO' };
+const DEF_RANGE = { long: '1Y', swing: '3M', intraday: '1D', ipo: '6M' };
+const HZ_DAYS = { long: 365, swing: 28, ipo: 182 };
+const STYLE_NOTE = {
+  long: ['Long-term', 'Hold ~12 months'],
+  swing: ['Swing', 'Hold days to ~4 weeks, catch one move'],
+  intraday: ['Intraday', 'In and out the same day'],
+  ipo: ['IPOs', 'New listings, ~6-month view']
+};
+const root = document.getElementById('radar');
+const isM = () => root.dataset.device === 'mobile';
+function detectDevice() {
+  const w = window.innerWidth || document.documentElement.clientWidth;
+  const coarse = window.matchMedia('(pointer: coarse)').matches;
+  const ua = /Android|iPhone|iPod|Mobile/i.test(navigator.userAgent || '');
+  const mobile = w < 640 || ((coarse || ua) && w < 900);
+  const was = root.dataset.device; root.dataset.device = mobile ? 'mobile' : 'desktop';
+  return was !== root.dataset.device;
+}
+detectDevice();
+let _rz; window.addEventListener('resize', () => { clearTimeout(_rz); _rz = setTimeout(() => { if (detectDevice()) { try { render(); } catch (e) {} } }, 200); });
+const state = { style: 'long', sector: 'ai', market: 'US', sym: null, range: '1Y', sort: { scr: ['chg_1d', -1], ipo: ['ipo_date', -1], hist: ['picked', -1] }, q: '' };
+window.__radar = state;
+const sgt = (opts) => new Intl.DateTimeFormat('en-SG', { timeZone: 'Asia/Singapore', ...opts });
+const fmtPct = (v, d = 1) => v == null || isNaN(v) ? '—' : (v > 0 ? '+' : '') + v.toFixed(d) + '%';
+const cls = (v) => v == null ? '' : v >= 0 ? 'up' : 'dn';
+const money = (v, cur) => v == null ? '—' : (cur === 'SGD' ? 'S$' : '$') + (v >= 1000 ? d3.format(',.2f')(v) : v < 1 ? v.toFixed(3) : v.toFixed(2));
+const el = (tag, props = {}, ...kids) => { const e = document.createElement(tag); for (const [k, v] of Object.entries(props)) { if (k === 'class') e.className = v; else if (k === 'text') e.textContent = v; else if (k.startsWith('data-') || k.startsWith('aria-') || k === 'role' || k === 'style') e.setAttribute(k, v); else e[k] = v; } kids.flat().forEach(c => c != null && e.append(c)); return e; };
+const secColor = { ai: 'var(--ai)', hc: 'var(--hc)', fin: 'var(--fin)', pwr: 'var(--pwr)', def: 'var(--def)', nrg: 'var(--nrg)', ipo: 'var(--ai)' };
+
+dash.calc('sector_pulse', {
+  title: 'Sector pulse',
+  description: 'Average 1-day and 1-month price change of the stocks tracked in each sector and market.',
+  inputs: ['stocks'],
+  fn: (stocks) => {
+    const out = [];
+    for (const market of ['US', 'SGX']) for (const sector of ['ai', 'hc', 'fin', 'pwr', 'def', 'nrg']) {
+      const g = stocks.filter(s => s.market === market && s.sector === sector && s.chg_1d != null);
+      const avg = (k) => { const v = g.map(s => s[k]).filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+      out.push({ id: market + '|' + sector, market, sector, stocks: g.length, avg_1d: avg('chg_1d'), avg_1m: avg('ret_1m'), avg_ytd: avg('ret_ytd'), up_today: g.filter(s => s.chg_1d > 0).length });
+    }
+    return out;
+  }
+});
+dash.calc('pick_returns', {
+  title: 'Return since each pick',
+  description: 'Each logged pick with the latest price and the % change since the day it was picked.',
+  inputs: ['picklog', 'stocks'],
+  fn: (picklog, stocks) => {
+    const px = Object.fromEntries(stocks.map(s => [s.sym, s.price]));
+    return picklog.map(p => ({ ...p, price_now: px[p.sym] ?? null, since_pick: px[p.sym] && p.price_at_pick ? (px[p.sym] / p.price_at_pick - 1) * 100 : null }));
+  }
+});
+
+/* ---------- market clocks (times in Singapore) ---------- */
+function zoned(dateStr, hm, tz) { // wall time in tz -> Date
+  const [y, m, d] = dateStr.split('-').map(Number), [H, M] = hm.split(':').map(Number);
+  let t = Date.UTC(y, m - 1, d, H, M);
+  for (let i = 0; i < 2; i++) {
+    const p = Object.fromEntries(new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).formatToParts(new Date(t)).map(x => [x.type, x.value]));
+    const asUtc = Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute);
+    t += Date.UTC(y, m - 1, d, H, M) - asUtc;
+  }
+  return new Date(t);
+}
+const ymdIn = (date, tz) => new Intl.DateTimeFormat('en-CA', { timeZone: tz }).format(date);
+const dowIn = (date, tz) => new Intl.DateTimeFormat('en-US', { timeZone: tz, weekday: 'short' }).format(date);
+function session(m, now) {
+  // find the current or next trading day in the market's own time zone
+  for (let k = 0; k < 8; k++) {
+    const d = new Date(now.getTime() + k * 864e5); const ds = ymdIn(d, m.tz);
+    if (['Sat', 'Sun'].includes(dowIn(zoned(ds, '12:00', m.tz), m.tz))) continue;
+    const s = { pre: zoned(ds, m.pre_open, m.tz), open: zoned(ds, m.open, m.tz), close: zoned(ds, m.close, m.tz), post: zoned(ds, m.after_close, m.tz), bs: m.break_start && zoned(ds, m.break_start, m.tz), be: m.break_end && zoned(ds, m.break_end, m.tz) };
+    if (now < s.post) return s;
+  }
+}
+const hm = (d) => sgt({ hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(d);
+const dayLbl = (d) => sgt({ weekday: 'short', day: 'numeric', month: 'short' }).format(d);
+function dur(ms) { const m = Math.round(ms / 6e4), h = Math.floor(m / 60); return h >= 24 ? Math.floor(h / 24) + 'd ' + (h % 24) + 'h' : h ? h + 'h ' + (m % 60) + 'm' : m + 'm'; }
+function drawClocks() {
+  const box = document.getElementById('clocks'); const md = dash.data('markets');
+  if (md.status !== 'ok') { box.replaceChildren(); return; }
+  const now = new Date();
+  box.replaceChildren(...md.data.map(m => {
+    const s = session(m, now); let st = 'closed', label = 'Closed', cd = '';
+    if (now >= s.open && now < s.close) {
+      if (s.bs && now >= s.bs && now < s.be) { st = 'lunch'; label = 'Lunch break'; cd = 'Resumes in ' + dur(s.be - now); }
+      else { st = 'open'; label = 'Open'; cd = 'Closes in ' + dur(s.close - now); }
+    } else if (now >= s.pre && now < s.open) { st = 'pre'; label = 'Pre-open'; cd = 'Opens in ' + dur(s.open - now); }
+    else if (now >= s.close && now < s.post) { st = 'pre'; label = 'After hours'; cd = 'Next session soon'; }
+    else { cd = 'Opens in ' + dur(s.open - now); }
+    const brk = s.bs ? ` · lunch ${hm(s.bs)}–${hm(s.be)}` : '';
+    return el('div', { class: 'pr-clock' }, el('b', { text: m.name }), el('span', { class: 'cd', text: cd }), el('span', { class: 'st ' + st, text: label }),
+      el('span', { class: 'hrs', text: `${dayLbl(s.open)} · ${hm(s.open)}–${hm(s.close)} SGT${brk}` + (m.market === 'US' ? ` · pre-market from ${hm(s.pre)}` : '') }));
+  }));
+}
+setInterval(() => { try { drawClocks(); } catch (e) {} }, 30000);
+
+/* ---------- controls ---------- */
+const tabs = [...document.querySelectorAll('.pr-tab')];
+const goStyle = (st) => { state.style = st; if (DEF_RANGE[st]) state.range = DEF_RANGE[st]; state.sym = null; dash.setLink('tab-' + st); render(); };
+tabs.forEach(b => b.addEventListener('click', () => goStyle(b.dataset.style)));
+const bmore = document.getElementById('bmore');
+document.querySelectorAll('#bnav button').forEach(b => b.addEventListener('click', (ev) => {
+  if (b.dataset.more) { ev.stopPropagation(); bmore.hidden = !bmore.hidden; return; }
+  bmore.hidden = true; goStyle(b.dataset.style);
+}));
+document.addEventListener('click', (ev) => { if (!bmore.hidden && !ev.target.closest('#bnav')) bmore.hidden = true; });
+document.querySelectorAll('[data-sector]').forEach(b => b.addEventListener('click', () => { state.sector = b.dataset.sector; state.sym = null; render(); }));
+document.querySelectorAll('[data-market]').forEach(b => b.addEventListener('click', () => { state.market = b.dataset.market; state.sym = null; render(); }));
+document.querySelectorAll('#ranges button').forEach(b => b.addEventListener('click', () => { state.range = b.dataset.r; drawChart(); }));
+document.getElementById('search').addEventListener('input', (e) => { state.q = e.target.value.toLowerCase(); drawScreener(); });
+const hash = location.hash.slice(1); const hs = hash.startsWith('tab-') && hash.slice(4);
+if (hs && ['long', 'swing', 'intraday', 'ipo', 'history', 'method', 'gov'].includes(hs)) { state.style = hs; if (DEF_RANGE[hs]) state.range = DEF_RANGE[hs]; }
+
+function sortable(tableId, key, draw) {
+  document.querySelectorAll(`#${tableId} th`).forEach(th => th.querySelector('button').addEventListener('click', () => {
+    const f = th.dataset.field; const cur = state.sort[key]; state.sort[key] = [f, cur[0] === f ? -cur[1] : -1]; draw();
+  }));
+}
+function applySort(rows, [f, dir], tableId) {
+  document.querySelectorAll(`#${tableId} th`).forEach(th => th.setAttribute('aria-sort', th.dataset.field === f ? (dir > 0 ? 'ascending' : 'descending') : 'none'));
+  return rows.slice().sort((a, b) => { const x = a[f], y = b[f]; if (x == null) return 1; if (y == null) return -1; return (typeof x === 'number' ? x - y : String(x).localeCompare(String(y))) * dir; });
+}
+
+/* ---------- data helpers ---------- */
+let SER = null, SER_SRC = null;
+function series() {
+  const p = dash.data('prices'); if (p.status !== 'ok') return null;
+  if (SER_SRC === p.data) return SER;
+  SER = new Map(); for (const r of p.data) { let a = SER.get(r.sym); if (!a) SER.set(r.sym, a = []); a.push({ t: new Date(r.date + 'T00:00:00Z'), v: +r.close }); }
+  for (const a of SER.values()) a.sort((x, y) => x.t - y.t);
+  SER_SRC = p.data; return SER;
+}
+const stockMap = () => { const s = dash.data('stocks'); return s.status === 'ok' ? new Map(s.data.map(r => [r.sym, r])) : new Map(); };
+function currentPicks() {
+  const p = dash.data('picks'); if (p.status !== 'ok') return [];
+  if (state.style === 'ipo') return p.data.filter(r => r.style === 'ipo').sort((a, b) => a.rank - b.rank);
+  return p.data.filter(r => r.style === state.style && r.sector === state.sector && r.market === state.market).sort((a, b) => a.rank - b.rank);
+}
+
+/* ---------- render ---------- */
+function render() {
+  root.style.setProperty('--sec', state.style === 'ipo' ? 'var(--ai)' : secColor[state.sector]);
+  tabs.forEach(b => b.setAttribute('aria-selected', String(b.dataset.style === state.style)));
+  document.querySelectorAll('#bnav button').forEach(b => b.setAttribute('aria-current', String(b.dataset.more ? ['history', 'method'].includes(state.style) : b.dataset.style === state.style)));
+  document.querySelectorAll('[data-sector]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.sector === state.sector)));
+  document.querySelectorAll('[data-market]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.market === state.market)));
+  const pickView = ['long', 'swing', 'intraday', 'ipo'].includes(state.style);
+  document.getElementById('picks-sec').hidden = !pickView;
+  const gov = state.style === 'gov';
+  document.getElementById('focus').hidden = state.style === 'method' || gov;
+  document.getElementById('pulse').hidden = state.style === 'method' || gov;
+  document.getElementById('events').hidden = gov;
+  document.getElementById('lower').hidden = gov;
+  document.getElementById('gov-mount').hidden = !gov;
+  document.getElementById('ipo-sec').hidden = state.style !== 'ipo';
+  document.getElementById('history-sec').hidden = state.style !== 'history';
+  document.getElementById('method-sec').hidden = state.style !== 'method';
+  document.getElementById('filters').style.display = state.style === 'method' || gov ? 'none' : '';
+  drawHeader(); drawClocks();
+  if (gov) { drawGov(); return; }
+  drawEvents(); drawPulse(); drawCards(); drawChart(); drawDetail(); drawX(); drawScreener();
+  if (state.style === 'ipo') drawIPO();
+  if (state.style === 'history') drawHistory();
+}
+
+function drawHeader() {
+  const s = dash.data('stocks'), asof = document.getElementById('asof');
+  if (s.status === 'ok' && s.data.length) {
+    asof.classList.remove('dash-skeleton');
+    const t = new Date(s.data[0].updated_utc + ':00Z');
+    asof.textContent = 'Updated ' + sgt({ weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(t) + ' SGT';
+  } else if (s.status === 'error') { asof.classList.remove('dash-skeleton'); asof.textContent = 'Prices failed to load'; }
+
+}
+
+function drawEvents() {
+  const box = document.getElementById('events'), ev = dash.data('events'), st = dash.data('stocks');
+  if (ev.status !== 'ok') { box.replaceChildren(); return; }
+  const today = ymdIn(new Date(), 'Asia/Singapore');
+  const from2 = new Date(Date.now() - 2 * 864e5).toISOString().slice(0, 10);
+  const items = ev.data.filter(e => e.date >= from2).map(e => ({ date: e.date, title: e.event, detail: e.detail, earn: false }));
+  if (st.status === 'ok') {
+    const lim = new Date(Date.now() + 9 * 864e5).toISOString().slice(0, 10), from = new Date(Date.now() - 864e5).toISOString().slice(0, 10);
+    const groups = d3.groups(st.data.filter(s => s.earnings_date && s.earnings_date >= from && s.earnings_date <= lim && (s.sector === state.sector || state.style === 'ipo')), s => s.earnings_date);
+    groups.forEach(([d, rows]) => items.push({ date: d, title: 'Earnings: ' + rows.map(r => r.sym).slice(0, 8).join(', '), detail: SECT[state.sector] ? `${rows.length} ${SECT[state.sector].toLowerCase()} name${rows.length > 1 ? 's' : ''} report` : '', earn: true }));
+  }
+  items.sort((a, b) => a.date.localeCompare(b.date));
+  box.replaceChildren(...items.map(i => el('div', { class: 'pr-ev' + (i.earn ? ' earn' : '') }, el('span', { class: 'd', text: d3.utcFormat('%a %b %-d')(new Date(i.date + 'T00:00:00Z')) }), el('b', { text: i.title }), el('div', { text: i.detail }))));
+}
+
+function drawPulse() {
+  const box = document.getElementById('pulse'), sp = dash.data('sector_pulse');
+  if (sp.status !== 'ok') { box.replaceChildren(); return; }
+  box.replaceChildren(...SECS.map(sec => {
+    const r = sp.data.find(x => x.market === state.market && x.sector === sec);
+    const b = el('button', { class: 'pr-pt', style: `--c: ${secColor[sec]}`, 'aria-pressed': String(sec === state.sector) },
+      el('span', { class: 'n' }, el('span', { class: 'ic', text: ICON[sec] }), document.createTextNode(SECT[sec])),
+      el('span', { class: 'v' }, el('strong', { class: cls(r?.avg_1d), text: fmtPct(r?.avg_1d, 1) }), el('span', { text: 'today' })),
+      el('span', { class: 'v' }, el('span', { class: cls(r?.avg_1m), text: fmtPct(r?.avg_1m, 0) + ' 1M' }), el('span', { text: `${r?.up_today ?? 0}/${r?.stocks ?? 0} up` })));
+    b.addEventListener('click', () => { state.sector = sec; state.sym = null; if (state.style === 'ipo' || state.style === 'history') state.style = state.style; render(); });
+    return b;
+  }));
+}
+
+function spark(svg, pts, color) {
+  const w = 200, h = 40; svg.setAttribute('viewBox', `0 0 ${w} ${h}`); svg.setAttribute('preserveAspectRatio', 'none');
+  if (!pts || pts.length < 2) return;
+  const x = d3.scaleLinear([0, pts.length - 1], [0, w]), y = d3.scaleLinear(d3.extent(pts, p => p.v), [h - 3, 3]);
+  const s = d3.select(svg); const id = 'g' + Math.random().toString(36).slice(2);
+  s.append('defs').append('linearGradient').attr('id', id).attr('x2', 0).attr('y2', 1).selectAll('stop').data([[0, .3], [1, 0]]).join('stop').attr('offset', d => d[0]).attr('style', d => `stop-color:${color};stop-opacity:${d[1]}`);
+  s.append('path').attr('d', d3.area().x((_, i) => x(i)).y0(h).y1(p => y(p.v))(pts)).attr('fill', `url(#${id})`);
+  s.append('path').attr('d', d3.line().x((_, i) => x(i)).y(p => y(p.v))(pts)).attr('fill', 'none').attr('stroke', color).attr('stroke-width', 2).attr('vector-effect', 'non-scaling-stroke').attr('stroke-linejoin', 'round');
+}
+
+function drawCards() {
+  const box = document.getElementById('cards'), sub = document.getElementById('picks-sub'), title = document.getElementById('picks-title');
+  const p = dash.data('picks'), st = dash.data('stocks');
+  if (p.status === 'error' || st.status === 'error') { box.replaceChildren(el('div', { class: 'pr-fail', text: 'Failed to load' })); return; }
+  if (p.status !== 'ok' || st.status !== 'ok') { box.replaceChildren(); return; }
+  const picks = currentPicks(), S = stockMap(), ser = series();
+  const sn = STYLE_NOTE[state.style]; const note = document.getElementById('style-note'); note.replaceChildren(el('b', { text: sn[0] + ' · ' }), document.createTextNode(sn[1]));
+  title.firstChild.textContent = state.style === 'ipo' ? 'Top 5 IPOs ' : `Top 5 · ${SECT[state.sector]} `;
+  sub.textContent = state.style === 'ipo' ? `${picks[0]?.picked ?? ''}` : `${state.market} · ${picks[0]?.picked ?? ''}`;
+  if (!picks.length) { box.replaceChildren(el('div', { class: 'pr-empty', text: state.style === 'ipo' ? 'No IPO picks today.' : 'No picks for this combination today.' })); return; }
+  if (!state.sym || !picks.some(x => x.sym === state.sym) && !S.has(state.sym)) state.sym = picks[0].sym;
+  const color = getComputedStyle(root).getPropertyValue('--sec').trim() || dash.colors[0];
+  box.replaceChildren(...picks.map((pk, i) => {
+    const s = S.get(pk.sym) || {};
+    const lo = Math.min(pk.exp_low, 0), hi = Math.max(pk.exp_high, 0), sc = (v) => ((v - lo) / (hi - lo || 1)) * 100;
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'pr-spark'); svg.setAttribute('aria-hidden', 'true');
+    const card = el('button', { class: 'pr-card in', style: `animation-delay:${i * 60}ms`, 'aria-pressed': String(pk.sym === state.sym) },
+      el('div', { class: 'top' }, el('div', {}, el('div', { class: 'pr-tk', text: pk.sym.replace('.SI', '') }), el('div', { class: 'pr-nm', text: s.name || '' })), el('span', { class: 'pr-rank', text: String(pk.rank) })),
+      el('div', { class: 'pr-px' }, el('strong', { text: money(s.price, s.currency) }), el('span', { class: 'pill ' + cls(s.chg_1d), text: fmtPct(s.chg_1d, 2) })),
+      svg,
+      el('div', { class: 'pr-exp' },
+        el('div', { class: 'lbl' }, el('span', {}, 'Forecast · ' + pk.horizon.toLowerCase()), el('b', { class: cls(pk.exp_base), text: fmtPct(pk.exp_base, Math.abs(pk.exp_base) < 5 ? 1 : 0) })),
+        el('div', { class: 'pr-range', title: '' }, el('div', { class: 'band', style: `left:${sc(pk.exp_low)}%;right:${100 - sc(pk.exp_high)}%` }), el('div', { class: 'zero', style: `left:${sc(0)}%` }), el('div', { class: 'base', style: `left:${sc(pk.exp_base)}%` })),
+        el('div', { class: 'lbl' }, el('span', { class: 'dn', text: fmtPct(pk.exp_low, 0) }), el('span', { class: 'up', text: fmtPct(pk.exp_high, 0) }))),
+      el('div', { class: 'pr-tags' }, el('span', { class: 'tag', text: pk.setup }), el('span', { class: 'tag conv-' + pk.conviction, text: pk.conviction }), s.serenity ? el('span', { class: 'tag ser', text: '@aleabitoreddit' }) : null));
+    const pts = ser?.get(pk.sym); spark(svg, pts ? pts.slice(-22) : null, color);
+    card.addEventListener('click', () => { state.sym = pk.sym; state.range = DEF_RANGE[state.style] || state.range; drawCards(); drawChart(); drawDetail(); drawScreener(); document.getElementById('focus').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); });
+    return card;
+  }));
+}
+
+function rangeStart(r, last) {
+  const d = new Date(last);
+  if (r === '5D') return new Date(d - 7 * 864e5); if (r === '1M') return new Date(d.setUTCMonth(d.getUTCMonth() - 1)); if (r === '3M') return new Date(d.setUTCMonth(d.getUTCMonth() - 3));
+  if (r === '6M') return new Date(d.setUTCMonth(d.getUTCMonth() - 6)); if (r === 'YTD') return new Date(Date.UTC(d.getUTCFullYear(), 0, 1)); if (r === '1Y') return new Date(d.setUTCFullYear(d.getUTCFullYear() - 1));
+  return new Date(0);
+}
+
+function drawChart() {
+  const box = document.getElementById('chart'), legend = document.getElementById('legend');
+  document.querySelectorAll('#ranges button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.r === state.range)));
+  const S = stockMap(), s = S.get(state.sym), ser = series();
+  const who = document.getElementById('f-who'), fp = document.getElementById('f-price'), fchg = document.getElementById('f-chg');
+  if (dash.data('prices').status === 'error') { box.replaceChildren(el('div', { class: 'pr-fail', text: 'Failed to load' })); return; }
+  if (!s || !ser) { box.replaceChildren(); return; }
+  who.textContent = `${s.sym.replace('.SI', '')} · ${s.name} · ${s.exchange}`;
+  fp.textContent = money(s.price, s.currency);
+  fchg.replaceChildren(el('span', { class: 'pill ' + cls(s.chg_1d), text: fmtPct(s.chg_1d, 2) + ' today' }), el('div', { class: 'pr-note', text: asOfLabel(s) }));
+  const pick = currentPicks().find(p => p.sym === s.sym);
+  let pts, intraday = state.range === '1D';
+  if (intraday) {
+    const it = dash.data('intraday');
+    pts = it.status === 'ok' ? it.data.filter(r => r.sym === s.sym).map(r => ({ t: new Date(r.time.replace('Z', ':00Z')), v: +r.price })) : [];
+  } else {
+    const all = ser.get(s.sym) || []; const start = rangeStart(state.range, all.at(-1)?.t || new Date());
+    pts = all.filter(p => p.t >= start);
+    if (pts.length && Math.abs(pts.at(-1).v - s.price) / s.price > 0.0005) pts = [...pts, { t: new Date(Math.max(Date.now(), pts.at(-1).t.getTime() + 864e5)), v: s.price, live: true }];
+  }
+  box.replaceChildren(); legend.replaceChildren();
+  if (pts.length < 2) { box.append(el('div', { class: 'pr-empty', text: intraday ? 'No intraday prices yet for this session.' : 'Not enough price history for this range yet.' })); return; }
+  const W = box.clientWidth || 600, H = isM() ? 240 : 320, m = { t: 14, r: isM() ? 56 : 64, b: 26, l: 8 };
+  const lastT = pts.at(-1).t, span = lastT - pts[0].t;
+  const last = pts.at(-1).v;
+  let fc = null;
+  if (pick && !intraday && HZ_DAYS[pick.style]) {
+    const h = HZ_DAYS[pick.style] * 864e5, ext = Math.min(h, Math.max(span * 0.5, 4 * 864e5)), f = ext / h;
+    fc = { end: new Date(+lastT + ext), f, full: f >= 0.999 };
+  } else if (pick && intraday && pick.style === 'intraday') {
+    const md = dash.data('markets'); const mk = md.status === 'ok' && md.data.find(x => x.market === s.market);
+    const ses = mk && session(mk, new Date());
+    if (ses && new Date() >= ses.open && ses.close > lastT) fc = { end: ses.close, f: 1, full: true };
+  }
+  if (fc) Object.assign(fc, { lo: last * (1 + pick.exp_low / 100 * fc.f), base: last * (1 + pick.exp_base / 100 * fc.f), hi: last * (1 + pick.exp_high / 100 * fc.f) });
+  const fan = fc, fanEnd = fc && fc.end;
+  const yv = pts.map(p => p.v).concat(fan ? [fan.lo, fan.hi] : []); if (intraday) { const df = dayFacts(s); if (df.open) yv.push(df.open); }
+  if (intraday && s.price) yv.push(s.price / (1 + (s.chg_1d || 0) / 100));
+  const x = d3.scaleUtc([pts[0].t, fanEnd || lastT], [m.l, W - m.r - (fc ? 34 : 0)]);
+  const y = d3.scaleLinear(d3.extent(yv), [H - m.b, m.t]).nice();
+  const color = getComputedStyle(root).getPropertyValue('--sec').trim() || dash.colors[0];
+  const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', `${s.sym} price chart`);
+  const gid = 'area' + s.sym.replace(/\W/g, '');
+  const grad = svg.append('defs').append('linearGradient').attr('id', gid).attr('x2', 0).attr('y2', 1);
+  [[0, .26], [.25, .16], [.5, .08], [.75, .03], [1, 0]].forEach(([o, a]) => grad.append('stop').attr('offset', o).attr('style', `stop-color:${color};stop-opacity:${a}`));
+  const yt = y.ticks(5);
+  svg.append('g').selectAll('line').data(yt).join('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', d => y(d)).attr('y2', d => y(d)).attr('stroke', 'var(--cds-chart-grid)');
+  const fmtY = (v) => money(v, s.currency);
+  svg.append('g').selectAll('text').data(yt).join('text').attr('x', W - m.r + 8).attr('y', d => y(d) + 4).attr('fill', 'var(--color-fg-muted)').attr('font-size', 11).text(fmtY);
+  const xt = x.ticks(Math.max(2, Math.floor(W / (isM() ? 90 : 110))));
+  const xf = intraday ? (d) => hm(d) : (span > 400 * 864e5 ? d3.utcFormat('%b %Y') : d3.utcFormat('%b %-d'));
+  svg.append('g').selectAll('text').data(xt).join('text').attr('x', d => x(d)).attr('y', H - 6).attr('text-anchor', 'middle').attr('fill', 'var(--color-fg-muted)').attr('font-size', 11).text(xf);
+  if (intraday && s.chg_1d != null) {
+    const pc = s.price / (1 + s.chg_1d / 100);
+    svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(pc)).attr('y2', y(pc)).attr('stroke', 'var(--cds-chart-reference)').attr('stroke-dasharray', '4 4');
+    svg.append('text').attr('x', m.l + 4).attr('y', y(pc) - 5).attr('fill', 'var(--color-fg-muted)').attr('font-size', 11).text('Previous close');
+    const op = dayFacts(s).open;
+    if (op) { svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(op)).attr('y2', y(op)).attr('stroke', 'var(--sec)').attr('stroke-opacity', .6).attr('stroke-dasharray', '2 4');
+      svg.append('text').attr('x', W - m.r - 4).attr('y', y(op) + (y(op) > y(pc) ? 13 : -5)).attr('text-anchor', 'end').attr('fill', 'var(--sec)').attr('font-size', 11).text('Open ' + money(op, s.currency)); }
+  }
+  svg.append('path').datum(pts).attr('d', d3.area().x(p => x(p.t)).y0(H - m.b).y1(p => y(p.v))).attr('fill', `url(#${gid})`);
+  const line = svg.append('path').datum(pts).attr('d', d3.line().x(p => x(p.t)).y(p => y(p.v))).attr('fill', 'none').attr('stroke', color).attr('stroke-width', 2).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
+  if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) { const L = line.node().getTotalLength(); line.attr('stroke-dasharray', `${L} ${L}`).attr('stroke-dashoffset', L).transition().duration(700).ease(d3.easeCubicOut).attr('stroke-dashoffset', 0); }
+  if (fc) {
+    const x0 = x(lastT), x1 = x(fc.end), grey = 'var(--color-fg-muted)';
+    svg.append('path').attr('d', `M${x0},${y(last)}L${x1},${y(fc.hi)}L${x1},${y(fc.lo)}Z`).attr('fill', grey).attr('fill-opacity', .1);
+    svg.append('line').attr('x1', x0).attr('y1', y(last)).attr('x2', x1).attr('y2', y(fc.hi)).attr('stroke', grey).attr('stroke-opacity', .5).attr('stroke-width', 1);
+    svg.append('line').attr('x1', x0).attr('y1', y(last)).attr('x2', x1).attr('y2', y(fc.lo)).attr('stroke', grey).attr('stroke-opacity', .5).attr('stroke-width', 1);
+    svg.append('line').attr('x1', x0).attr('y1', y(last)).attr('x2', x1).attr('y2', y(fc.base)).attr('stroke', grey).attr('stroke-width', 2.5).attr('stroke-dasharray', '7 5').attr('stroke-linecap', 'round');
+    svg.append('circle').attr('cx', x1).attr('cy', y(fc.base)).attr('r', 4).attr('fill', grey);
+    const pct = (k) => (fc[k] / last - 1) * 100;
+    const labs = [{ y: y(fc.hi), t: fmtPct(pct('hi'), 0), c: 'var(--color-ok)' }, { y: y(fc.base), t: fmtPct(pct('base'), 0), c: 'var(--color-fg)', b: true }, { y: y(fc.lo), t: fmtPct(pct('lo'), 0), c: 'var(--color-bad)' }];
+    for (let i = 1; i < labs.length; i++) if (labs[i].y - labs[i - 1].y < 14) labs[i].y = labs[i - 1].y + 14;
+    labs.forEach(l => svg.append('text').attr('x', x1 + 6).attr('y', l.y + 4).attr('font-size', 11).attr('font-weight', l.b ? 700 : 500).attr('fill', l.c).text(l.t));
+    svg.append('line').attr('x1', x0).attr('x2', x0).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', 'var(--cds-chart-reference)').attr('stroke-dasharray', '2 4');
+    svg.append('text').attr('x', x0 - 4).attr('y', m.t + 8).attr('text-anchor', 'end').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text('Actual');
+    svg.append('text').attr('x', x0 + 4).attr('y', m.t + 8).attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text('Forecast');
+  }
+  svg.append('circle').attr('cx', x(lastT)).attr('cy', y(last)).attr('r', 4).attr('fill', color).attr('stroke', 'var(--color-panel)').attr('stroke-width', 2);
+  // tooltip
+  const tip = el('div', { class: 'pr-tip', hidden: true }); box.append(tip);
+  const dot = svg.append('circle').attr('r', 4).attr('fill', color).attr('stroke', 'var(--color-panel)').attr('stroke-width', 2).attr('opacity', 0);
+  const rule = svg.append('line').attr('y1', m.t).attr('y2', H - m.b).attr('stroke', 'var(--cds-chart-axis)').attr('opacity', 0);
+  const bis = d3.bisector(p => p.t).center;
+  svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', W - m.l - m.r).attr('height', H - m.t - m.b).attr('fill', 'transparent')
+    .on('pointermove', (ev) => {
+      const [mx] = d3.pointer(ev); const p = pts[bis(pts, x.invert(mx))]; if (!p) return;
+      dot.attr('cx', x(p.t)).attr('cy', y(p.v)).attr('opacity', 1); rule.attr('x1', x(p.t)).attr('x2', x(p.t)).attr('opacity', 1);
+      const ch = (p.v / pts[0].v - 1) * 100;
+      tip.replaceChildren(el('div', { class: 'd', text: intraday ? hm(p.t) + ' SGT' : p.live ? 'Latest' : d3.utcFormat('%a %b %-d, %Y')(p.t) }), el('div', {}, el('b', { text: fmtY(p.v) }), document.createTextNode(' '), el('span', { class: cls(ch), text: fmtPct(ch) + ' in view' })));
+      tip.hidden = false; const bw = box.clientWidth, px = x(p.t) / W * bw;
+      tip.style.left = Math.min(Math.max(px - tip.offsetWidth / 2, 0), bw - tip.offsetWidth) + 'px'; tip.style.top = Math.max(y(p.v) / H * box.clientHeight - 56, 0) + 'px';
+    })
+    .on('pointerleave', () => { tip.hidden = true; dot.attr('opacity', 0); rule.attr('opacity', 0); });
+  const ch = (last / pts[0].v - 1) * 100;
+  legend.append(el('span', {}, el('i', { style: `background:${color}` }), document.createTextNode(`Actual price · ${state.range} change `), el('b', { class: cls(ch), text: fmtPct(ch) })));
+  if (fc) {
+    const endLbl = intraday ? 'the close at ' + hm(fc.end) + ' SGT' : d3.utcFormat('%b %-d, %Y')(fc.end);
+    legend.append(el('span', {}, el('i', { style: 'background:var(--color-fg-muted)' }), document.createTextNode(`Forecast to ${endLbl}: base ${fmtPct((fc.base / last - 1) * 100, 1)}, shaded range ${fmtPct((fc.lo / last - 1) * 100, 0)} to ${fmtPct((fc.hi / last - 1) * 100, 0)}`)));
+    if (!fc.full) legend.append(el('span', { text: `Showing the first part of the ${pick.horizon.toLowerCase()} forecast (${fmtPct(pick.exp_base, 0)} by the end). Choose a longer range to see all of it.` }));
+  } else if (pick && pick.style === 'intraday') legend.append(el('span', { text: `Forecast for ${pick.horizon.toLowerCase()}: ${fmtPct(pick.exp_base, 1)} (range ${fmtPct(pick.exp_low, 1)} to ${fmtPct(pick.exp_high, 1)}). Shown on the 1D chart while the market is open.` }));
+  if (intraday) legend.append(el('span', { text: 'Times in Singapore time · 5-minute prices' }));
+}
+
+function dayFacts(s) {
+  // Open / previous close / day range. Older data files lack them: previous close is then worked out from price and % change,
+  // and the open is the first 5-minute price of the session.
+  const it = dash.data('intraday'); const first = it.status === 'ok' ? it.data.find(r => r.sym === s.sym) : null;
+  const pc = s.prev_close ?? (s.price != null && s.chg_1d != null ? s.price / (1 + s.chg_1d / 100) : null);
+  const open = s.open ?? (first ? +first.price : null);
+  return { pc, open, hi: s.day_high, lo: s.day_low, approxOpen: s.open == null && first != null };
+}
+function dayRows(s, row) {
+  const f = dayFacts(s);
+  return [row(f.approxOpen ? 'Open (first 5 min)' : 'Open', money(f.open, s.currency)), row('Previous close', money(f.pc, s.currency)),
+    row('Day range', f.lo != null && f.hi != null ? `${money(f.lo, s.currency)} – ${money(f.hi, s.currency)}` : '—'),
+    row('Change from open', f.open ? fmtPct((s.price / f.open - 1) * 100, 2) : '—', f.open ? cls(s.price - f.open) : '')];
+}
+function asOfLabel(s) {
+  const t = s.price_time ? new Date(s.price_time.replace('Z', ':00Z')) : new Date(s.updated_utc + ':00Z');
+  return `Price at ${sgt({ weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(t)} SGT`;
+}
+function drawDetail() {
+  const stats = document.getElementById('stats'), why = document.getElementById('why'), nl = document.getElementById('newslist');
+  const s = stockMap().get(state.sym); if (!s) { stats.replaceChildren(); why.replaceChildren(); nl.replaceChildren(); return; }
+  const pick = currentPicks().find(p => p.sym === s.sym);
+  const row = (k, v, c) => el('div', {}, el('dt', { text: k }), el('dd', { class: c || '', text: v }));
+  stats.replaceChildren(
+    ...dayRows(s, row),
+    row('Analyst target', s.analyst_target ? `${money(s.analyst_target, s.currency)} (${fmtPct(s.target_upside, 0)})` : '—', cls(s.target_upside)),
+    row('Rating', s.rating ? `${s.rating[0].toUpperCase() + s.rating.slice(1)}${s.analysts ? ' · ' + s.analysts + ' analysts' : ''}` : '—'),
+    row('Revenue growth', fmtPct(s.rev_growth, 0), cls(s.rev_growth)),
+    row('Forward P/E', s.fwd_pe != null ? (s.fwd_pe < 0 ? 'Loss-making' : s.fwd_pe.toFixed(1) + 'x') : '—'),
+    row('RSI (14 day)', s.rsi14 != null ? String(s.rsi14) + (s.rsi14 <= 30 ? ' · oversold' : s.rsi14 >= 70 ? ' · overbought' : '') : '—'),
+    row('From 52-week high', fmtPct(s.off_high), cls(s.off_high)),
+    row('YTD · 1 year', `${fmtPct(s.ret_ytd, 0)} · ${fmtPct(s.ret_1y, 0)}`),
+    row('Next earnings', s.earnings_date ? d3.utcFormat('%a %b %-d')(new Date(s.earnings_date + 'T00:00:00Z')) : '—'),
+    row('Market cap', s.mcap_b != null ? (s.mcap_b >= 1000 ? (s.mcap_b / 1000).toFixed(2) + 'T' : s.mcap_b.toFixed(1) + 'B') + ' ' + s.currency : '—'),
+    row('Volume vs 20-day', s.vol_ratio != null ? s.vol_ratio.toFixed(2) + 'x' : '—'));
+  why.replaceChildren(...(pick ? [
+    el('div', { class: 'blk', style: '--c: var(--sec)' }, el('span', { class: 'k', text: `#${pick.rank} · ${pick.setup}` }), document.createTextNode(pick.thesis)),
+    el('div', { class: 'blk', style: '--c: var(--color-ok)' }, el('span', { class: 'k', text: '⚡ Catalyst' }), document.createTextNode(pick.catalyst)),
+    el('div', { class: 'blk', style: '--c: var(--color-bad)' }, el('span', { class: 'k', text: '⚠ Risk' }), document.createTextNode(pick.risk))] :
+    [el('p', { class: 'pr-note', text: 'Not in today\'s top 5.' })]));
+  const nd = dash.data('news'); const items = nd.status === 'ok' ? nd.data.filter(n => n.kind === 'news' && n.sym === s.sym).slice(0, 4) : [];
+  nl.replaceChildren(...items.map(n => el('li', {}, el('a', { href: n.url, target: '_blank', rel: 'noopener', text: n.title }), el('span', { text: `${n.publisher} · ${d3.utcFormat('%b %-d')(new Date(n.when.slice(0, 10) + 'T00:00:00Z'))}` }))));
+}
+
+function drawX() {
+  const ul = document.getElementById('xlist'), nd = dash.data('news');
+  if (nd.status !== 'ok') { ul.replaceChildren(); return; }
+  const S = stockMap();
+  ul.replaceChildren(...nd.data.filter(n => n.kind === 'x').map(n => el('li', {},
+    el('div', { class: 'meta' }, el('span', { text: d3.utcFormat('%a %b %-d')(new Date(n.when.slice(0, 10) + 'T00:00:00Z')) }), ...n.sym.split(' ').map(t => { const b = el('button', { class: 'tk', text: '$' + t }); b.addEventListener('click', () => { if (S.has(t)) { state.sym = t; drawChart(); drawDetail(); drawScreener(); document.getElementById('focus').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } }); return b; })),
+    el('span', { text: n.title }), el('a', { href: n.url, target: '_blank', rel: 'noopener', class: 'pr-note', text: 'Open on X' }))));
+}
+
+const heat = (v, max, d) => { const a = v == null ? 0 : Math.min(Math.abs(v) / max, 1) * 0.5 + 0.06; return el('td', { class: 'pr-heat ' + cls(v), style: v == null ? '' : `background: color-mix(in srgb, ${v >= 0 ? 'var(--color-ok)' : 'var(--color-bad)'} ${Math.round(a * 100)}%, transparent)`, text: fmtPct(v, d) }); };
+function drawScreener() {
+  const tb = document.querySelector('#scr-table tbody'), st = dash.data('stocks');
+  document.getElementById('scr-sub').textContent = `${SECT[state.sector]} · ${state.market} · click a row to chart it`;
+  if (st.status !== 'ok') { tb.replaceChildren(); return; }
+  let rows = st.data.filter(s => s.sector === state.sector && s.market === state.market);
+  if (state.q) rows = rows.filter(s => (s.sym + ' ' + s.name).toLowerCase().includes(state.q));
+  rows = applySort(rows, state.sort.scr, 'scr-table');
+  const mx = d3.max(rows, r => Math.abs(r.chg_1d || 0)) || 1;
+  tb.replaceChildren(...rows.map(s => {
+    const tr = el('tr', { class: s.sym === state.sym ? 'sel' : '' },
+      el('td', {}, el('b', { text: s.sym })), el('td', { class: 'nm l', text: s.name }), el('td', { text: money(s.price, s.currency) }),
+      el('td', { class: cls(s.chg_1d) }, document.createTextNode(fmtPct(s.chg_1d, 2)), el('span', { class: 'pr-bar', style: `width:${Math.abs(s.chg_1d || 0) / mx * 36}px;background:${s.chg_1d >= 0 ? 'var(--color-ok)' : 'var(--color-bad)'}` })),
+      heat(s.ret_1m, 25, 1), heat(s.ret_ytd, 60, 0), heat(s.ret_1y, 80, 0),
+      el('td', { text: s.rsi14 ?? '—' }), el('td', { class: cls(s.target_upside), text: fmtPct(s.target_upside, 0) }));
+    tr.addEventListener('click', () => { state.sym = s.sym; drawChart(); drawDetail(); drawScreener(); drawCards(); document.getElementById('focus').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); });
+    return tr;
+  }));
+}
+
+function drawIPO() {
+  const tb = document.querySelector('#ipo-table tbody'), d = dash.data('ipos');
+  if (d.status !== 'ok') { tb.replaceChildren(); return; }
+  const S = stockMap();
+  tb.replaceChildren(...applySort(d.data, state.sort.ipo, 'ipo-table').map(r => {
+    const tr = el('tr', {}, el('td', {}, el('b', { text: r.sym })), el('td', { class: 'l', text: r.name }), el('td', { text: r.status }),
+      el('td', { text: d3.utcFormat('%b %-d, %Y')(new Date(r.ipo_date + 'T00:00:00Z')) }), el('td', { text: r.ipo_price != null ? money(r.ipo_price, 'USD') : '—' }),
+      el('td', { text: r.price != null ? money(r.price, 'USD') : '—' }), el('td', { class: cls(r.since_ipo), text: fmtPct(r.since_ipo, 0) }), el('td', { class: cls(r.chg_1d), text: fmtPct(r.chg_1d, 2) }));
+    tr.addEventListener('click', () => { if (S.has(r.sym)) { state.sym = r.sym; drawChart(); drawDetail(); document.getElementById('focus').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } });
+    return tr;
+  }));
+}
+
+function drawHistory() {
+  const tb = document.querySelector('#hist-table tbody'), d = dash.data('pick_returns'), k = document.getElementById('hist-kpis');
+  if (d.status !== 'ok') { tb.replaceChildren(); k.replaceChildren(); return; }
+  const rows = d.data.filter(r => r.style === 'ipo' || (r.sector === state.sector && r.market === state.market));
+  const done = rows.filter(r => r.since_pick != null), days = new Set(rows.map(r => r.picked)).size;
+  const win = done.filter(r => r.since_pick > 0).length, avg = done.length ? d3.mean(done, r => r.since_pick) : null;
+  k.replaceChildren(el('div', { class: 'pr-kpi' }, el('span', { text: 'Days logged' }), el('strong', { text: String(days) })),
+    el('div', { class: 'pr-kpi' }, el('span', { text: 'Picks in view' }), el('strong', { text: String(rows.length) })),
+    el('div', { class: 'pr-kpi' }, el('span', { text: 'Up since picked' }), el('strong', { text: done.length ? Math.round(win / done.length * 100) + '%' : '—' })),
+    el('div', { class: 'pr-kpi' }, el('span', { text: 'Average move since pick' }), el('strong', { class: cls(avg), text: fmtPct(avg) })));
+  tb.replaceChildren(...applySort(rows, state.sort.hist, 'hist-table').map(r => el('tr', { 'data-key': r.id },
+    el('td', { text: r.picked }), el('td', { class: 'l', text: STYLE[r.style] }), el('td', { class: 'l', text: r.style === 'ipo' ? 'IPO' : SECT[r.sector] }), el('td', { text: String(r.rank) }),
+    el('td', { class: 'l' }, el('b', { text: r.sym })), el('td', { text: String(r.price_at_pick) }), el('td', { text: r.price_now != null ? String(r.price_now) : '—' }),
+    el('td', { class: cls(r.since_pick), text: fmtPct(r.since_pick) }), el('td', { text: fmtPct(r.exp_base, 0) }), el('td', { class: 'l', text: r.horizon }))));
+}
+
+/* ---------- Top 10 Government-Traded Stocks ---------- */
+const GV = { period: 90, who: 'all', side: 'buy', ex: 'nasdaq', sym: null, mounted: false };
+const GV_WHO = { all: null, trump: ['trump'], house: ['house'], senate: ['senate'] };
+const GV_WHO_LBL = { all: 'all tracked officials', trump: 'Donald Trump', house: 'House members', senate: 'senators' };
+const GROUP_COLOR = { house: 'var(--def)', senate: 'var(--x)', trump: 'var(--fin)', exec: 'var(--hc)' };
+const dayN = (s) => Math.floor(Date.parse(s.slice(0, 10) + 'T00:00:00Z') / 864e5);
+const fmtD = (s) => s ? d3.utcFormat('%b %-d, %Y')(new Date(s.slice(0, 10) + 'T00:00:00Z')) : '—';
+const fmtAmt = (t) => t.amount_label || (t.amount ? '$' + d3.format(',')(t.amount) + ' (range midpoint)' : '');
+function gvAsOf() {
+  const s = dash.data('gov_sources');
+  const r = s.status === 'ok' ? s.data.find(x => x.as_of) : null;
+  return r ? r.as_of : new Date().toISOString().slice(0, 10);
+}
+function gvScore(trs, side, window, asofN) {
+  const act = trs.filter(t => side === 'both' || t.side === side);
+  if (!act.length) return null;
+  const officials = new Set(act.map(t => t.official_id));
+  const last = act.reduce((m, t) => t.tx_date > m ? t.tx_date : m, '');
+  const lastDisc = act.reduce((m, t) => (t.disclosed || '') > m ? t.disclosed : m, '');
+  const occasions = new Set(act.map(t => t.official_id + '|' + t.tx_date));
+  const buys = trs.filter(t => t.side === 'buy').length, sells = trs.length - buys;
+  const net = (side === 'sell' ? sells : buys) / (buys + sells);
+  const parts = { breadth: 40 * Math.min(officials.size, 5) / 5, recency: 25 * Math.max(0, 1 - (asofN - dayN(last)) / window), repeat: 15 * Math.min(occasions.size, 10) / 10, net: 20 * net };
+  return { score: Math.round(parts.breadth + parts.recency + parts.repeat + parts.net), parts, officials: officials.size, n: act.length, buys, sells, last, lastDisc };
+}
+function gvSelect() {
+  const d = dash.data('gov_trades'); if (d.status !== 'ok') return null;
+  const asof = gvAsOf(), asofN = dayN(asof), start = asofN - GV.period;
+  const groups = GV_WHO[GV.who];
+  const sel = d.data.filter(t => dayN(t.tx_date) >= start && dayN(t.tx_date) <= asofN && (!groups || groups.includes(t.group)) && (GV.ex === 'all' || t.nasdaq));
+  const by = d3.group(sel, t => t.ticker);
+  const ranked = [...by].map(([tk, trs]) => ({ tk, trs, ...(gvScore(trs, GV.side, GV.period, asofN) || {}) })).filter(r => r.score != null)
+    .sort((a, b) => b.score - a.score || b.officials - a.officials || (b.last > a.last ? 1 : -1));
+  return { sel, ranked, asof };
+}
+function gvMount() {
+  if (GV.mounted) return;
+  const tpl = document.getElementById('gov-tpl'); document.getElementById('gov-mount').append(tpl.content.cloneNode(true)); GV.mounted = true;
+  document.querySelectorAll('#gv-filters button').forEach(b => b.addEventListener('click', () => { GV[b.dataset.gk] = b.dataset.gk === 'period' ? +b.dataset.gv : b.dataset.gv; GV.sym = null; drawGov(); }));
+}
+function drawGov() {
+  gvMount();
+  document.querySelectorAll('#gv-filters button').forEach(b => b.setAttribute('aria-pressed', String(String(GV[b.dataset.gk]) === b.dataset.gv)));
+  const d = dash.data('gov_trades'), st = dash.data('gov_stocks'), src = dash.data('gov_sources');
+  const asofEl = document.getElementById('gv-asof');
+  if (src.status === 'ok') {
+    const a = src.data.find(x => x.as_of);
+    asofEl.textContent = `Personal stock trades that US officials have publicly disclosed · last successful update ${a ? fmtD(a.updated) : '—'}`;
+    document.getElementById('gv-src').replaceChildren(...src.data.filter(x => !x.as_of).map(x => el('li', {}, el('a', { href: x.url, target: '_blank', rel: 'noopener', text: x.source }), document.createTextNode(` — ${x.covers}. Transactions ${fmtD(x.tx_from)} to ${fmtD(x.tx_to)}; ${d3.format(',')(x.records)} records. ${x.note || ''}`))));
+  }
+  const cards = document.getElementById('gv-cards'), bars = document.getElementById('gv-bars'), tb = document.querySelector('#gv-table tbody');
+  if (d.status === 'error') { bars.replaceChildren(el('div', { class: 'pr-fail', text: 'Failed to load' })); return; }
+  if (d.status !== 'ok' || st.status !== 'ok') { cards.replaceChildren(); bars.replaceChildren(); tb.replaceChildren(); return; }
+  const S = new Map(st.data.map(r => [r.ticker, r]));
+  const { sel, ranked, asof } = gvSelect();
+  const top = ranked.slice(0, 10);
+  // summary cards (purchases in the selected period / officials / exchange)
+  const buys = sel.filter(t => t.side === 'buy');
+  const byTk = d3.rollup(buys, v => new Set(v.map(t => t.official_id)).size, t => t.ticker);
+  const latest = buys.filter(t => t.disclosed).sort((a, b) => b.disclosed.localeCompare(a.disclosed) || b.tx_date.localeCompare(a.tx_date))[0];
+  const exLbl = GV.ex === 'nasdaq' ? 'NASDAQ' : 'US';
+  cards.replaceChildren(
+    el('div', { class: 'pr-kpi', style: '--c: var(--def)' }, el('span', { text: 'Officials who bought stocks' }), el('strong', { text: String(new Set(buys.map(t => t.official_id)).size) }), el('em', { text: `last ${GV.period} days · ${GV_WHO_LBL[GV.who]}` })),
+    el('div', { class: 'pr-kpi', style: '--c: var(--x)' }, el('span', { text: `Unique ${exLbl} stocks bought` }), el('strong', { text: String(byTk.size) }), el('em', { text: 'individual stocks only' })),
+    el('div', { class: 'pr-kpi', style: '--c: var(--hc)' }, el('span', { text: 'Bought by 2+ officials' }), el('strong', { text: String([...byTk.values()].filter(n => n >= 2).length) }), el('em', { text: 'distinct buyers, not filings' })),
+    el('div', { class: 'pr-kpi', style: '--c: var(--fin)' }, el('span', { text: 'Most recently disclosed purchase' }), el('strong', { text: latest ? latest.ticker : '—' }), el('em', { text: latest ? `${latest.official} · disclosed ${fmtD(latest.disclosed)}` : 'none in this period' })));
+  document.getElementById('gv-chart-sub').textContent = `${GV.side === 'buy' ? 'purchases' : GV.side === 'sell' ? 'sales' : 'purchases and sales'} · ${GV_WHO_LBL[GV.who]} · last ${GV.period} days by transaction date · ${GV.ex === 'nasdaq' ? 'NASDAQ-listed' : 'all US exchanges'}`;
+  if (!top.length) {
+    const who = d.data.filter(t => !GV_WHO[GV.who] || GV_WHO[GV.who].includes(t.group));
+    const lastTx = who.reduce((m, t) => t.tx_date > m ? t.tx_date : m, '');
+    const msg = `No disclosed ${GV.side === 'sell' ? 'sales' : 'purchases'} by ${GV_WHO_LBL[GV.who]} with transaction dates in the last ${GV.period} days.` + (lastTx ? ` The latest disclosed transaction is from ${fmtD(lastTx)}; try a longer period.` : '');
+    bars.replaceChildren(el('div', { class: 'gv-empty', text: msg })); tb.replaceChildren(); gvDetail(null, S); return;
+  }
+  if (!GV.sym || !top.some(r => r.tk === GV.sym)) GV.sym = top[0].tk;
+  // horizontal bar chart
+  bars.replaceChildren();
+  const W = bars.clientWidth || 700, rowH = isM() ? 38 : 40, m = { t: 8, r: isM() ? 44 : 120, b: 26, l: isM() ? 54 : 70 }, H = m.t + m.b + rowH * top.length;
+  const x = d3.scaleLinear([0, 100], [m.l, W - m.r]);
+  const svg = d3.select(bars).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', 'Top 10 stocks by Government Trading Score');
+  const gid = 'gvgrad';
+  const g = svg.append('defs').append('linearGradient').attr('id', gid);
+  g.append('stop').attr('offset', 0).attr('style', 'stop-color:var(--def)'); g.append('stop').attr('offset', 1).attr('style', 'stop-color:var(--x)');
+  [0, 25, 50, 75, 100].forEach(v => { svg.append('line').attr('x1', x(v)).attr('x2', x(v)).attr('y1', m.t).attr('y2', H - m.b).attr('stroke', 'var(--cds-chart-grid)'); svg.append('text').attr('x', x(v)).attr('y', H - 8).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text(v); });
+  const tip = el('div', { class: 'pr-tip', hidden: true }); bars.append(tip);
+  top.forEach((r, i) => {
+    const y = m.t + i * rowH, s = S.get(r.tk);
+    const row = svg.append('g').attr('class', 'row' + (r.tk === GV.sym ? ' sel' : '')).attr('tabindex', 0).attr('role', 'button').attr('aria-label', `${r.tk} score ${r.score}`);
+    row.append('rect').attr('x', 0).attr('y', y).attr('width', W).attr('height', rowH).attr('fill', 'transparent');
+    row.append('text').attr('x', m.l - 10).attr('y', y + rowH / 2 - 2).attr('text-anchor', 'end').attr('font-weight', 700).attr('font-size', 13).attr('fill', 'var(--color-fg)').text(r.tk);
+    row.append('text').attr('x', m.l - 10).attr('y', y + rowH / 2 + 12).attr('text-anchor', 'end').attr('font-size', 10).attr('fill', 'var(--color-fg-muted)').text('#' + (i + 1));
+    const bw = Math.max(2, x(r.score) - x(0));
+    const bar = row.append('rect').attr('class', 'bar').attr('x', x(0)).attr('y', y + 7).attr('height', rowH - 14).attr('rx', 6).attr('fill', `url(#${gid})`).attr('fill-opacity', 1 - i * 0.05).attr('width', bw);
+    if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) bar.attr('width', 0).transition().duration(600).delay(i * 40).ease(d3.easeCubicOut).attr('width', bw);
+    const nm = (s?.name || r.trs[0].issuer || '').slice(0, isM() ? 18 : 34);
+    const inside = bw > 150;
+    row.append('text').attr('x', inside ? x(0) + 10 : x(0) + bw + 8).attr('y', y + rowH / 2 + 4).attr('font-size', 11).attr('fill', inside ? '#fff' : 'var(--color-fg-muted)').text(nm);
+    row.append('text').attr('x', W - m.r + 10).attr('y', y + rowH / 2 + 5).attr('font-size', 15).attr('font-weight', 700).attr('fill', 'var(--color-fg)').attr('font-family', 'var(--num)').text(r.score);
+    if (!isM()) row.append('text').attr('x', W - m.r + 42).attr('y', y + rowH / 2 + 4).attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text(`${r.officials} official${r.officials > 1 ? 's' : ''}`);
+    row.on('click', () => { GV.sym = r.tk; drawGov(); document.getElementById('gv-detail').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); })
+      .on('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); GV.sym = r.tk; drawGov(); } })
+      .on('pointermove', (ev) => {
+        const [mx, my] = d3.pointer(ev, bars);
+        tip.replaceChildren(el('div', { class: 'd', text: `${r.tk} · ${s?.name || ''}` }),
+          el('div', { text: `Breadth ${r.parts.breadth.toFixed(0)}/40 · Recency ${r.parts.recency.toFixed(0)}/25 · Repeat ${r.parts.repeat.toFixed(0)}/15 · Direction ${r.parts.net.toFixed(0)}/20` }),
+          el('div', { text: `${r.buys} purchase${r.buys === 1 ? '' : 's'}, ${r.sells} sale${r.sells === 1 ? '' : 's'} · latest trade ${fmtD(r.last)}` }));
+        tip.hidden = false; tip.style.left = Math.min(mx + 12, bars.clientWidth - tip.offsetWidth) + 'px'; tip.style.top = (my + 14) + 'px';
+      }).on('pointerleave', () => { tip.hidden = true; });
+  });
+  // table
+  tb.replaceChildren(...top.map((r, i) => {
+    const s = S.get(r.tk);
+    const tr = el('tr', { class: r.tk === GV.sym ? 'sel' : '' }, el('td', { text: String(i + 1) }), el('td', { class: 'l nm', text: s?.name || r.trs[0].issuer || '' }), el('td', { class: 'l' }, el('b', { text: r.tk })),
+      el('td', { text: String(r.officials) }), el('td', { text: fmtD(r.last) }), el('td', { text: fmtD(r.lastDisc) }),
+      el('td', {}, document.createTextNode(s?.price != null ? money(s.price, 'USD') + ' ' : '—'), s?.chg_1d != null ? el('span', { class: 'pill ' + cls(s.chg_1d), text: fmtPct(s.chg_1d, 2) }) : null),
+      el('td', {}, el('span', { class: 'gv-score', text: String(r.score) })));
+    tr.addEventListener('click', () => { GV.sym = r.tk; drawGov(); document.getElementById('gv-detail').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); });
+    return tr;
+  }));
+  gvDetail(top.find(r => r.tk === GV.sym), S);
+}
+function gvDetail(r, S) {
+  const box = document.getElementById('gv-chart'), list = document.getElementById('gv-off-list');
+  const who = document.getElementById('gv-who'), pr = document.getElementById('gv-price'), ch = document.getElementById('gv-chg');
+  if (!r) { box.replaceChildren(); list.replaceChildren(); who.textContent = ''; pr.textContent = '—'; ch.replaceChildren(); return; }
+  const s = S.get(r.tk);
+  who.textContent = `${r.tk} · ${s?.name || ''} · ${s?.exchange || ''}`;
+  pr.textContent = s?.price != null ? money(s.price, 'USD') : '—';
+  ch.replaceChildren(s?.chg_1d != null ? el('span', { class: 'pill ' + cls(s.chg_1d), text: fmtPct(s.chg_1d, 2) + ' today' }) : el('span'));
+  // price history with trade markers (all disclosed trades in the last year, so the chart shows the context)
+  const gp = dash.data('gov_prices'); box.replaceChildren();
+  const all = dash.data('gov_trades').data.filter(t => t.ticker === r.tk);
+  const pts = gp.status === 'ok' ? gp.data.filter(p => p.ticker === r.tk).map(p => ({ t: new Date(p.date + 'T00:00:00Z'), v: +p.close })) : [];
+  if (pts.length > 1) {
+    const W = box.clientWidth || 600, H = isM() ? 230 : 300, m = { t: 14, r: isM() ? 56 : 64, b: 26, l: 8 };
+    const x = d3.scaleUtc(d3.extent(pts, p => p.t), [m.l, W - m.r]), y = d3.scaleLinear(d3.extent(pts, p => p.v), [H - m.b, m.t]).nice();
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', `${r.tk} price, last 12 months`);
+    y.ticks(5).forEach(v => { svg.append('line').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(v)).attr('y2', y(v)).attr('stroke', 'var(--cds-chart-grid)'); svg.append('text').attr('x', W - m.r + 8).attr('y', y(v) + 4).attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text(money(v, 'USD')); });
+    x.ticks(Math.max(2, Math.floor(W / (isM() ? 90 : 110)))).forEach(t => svg.append('text').attr('x', x(t)).attr('y', H - 6).attr('text-anchor', 'middle').attr('font-size', 11).attr('fill', 'var(--color-fg-muted)').text(d3.utcFormat('%b %Y')(t)));
+    const grad = svg.append('defs').append('linearGradient').attr('id', 'gvarea').attr('x2', 0).attr('y2', 1);
+    [[0, .26], [.5, .08], [1, 0]].forEach(([o, a]) => grad.append('stop').attr('offset', o).attr('style', `stop-color:var(--def);stop-opacity:${a}`));
+    svg.append('path').datum(pts).attr('d', d3.area().x(p => x(p.t)).y0(H - m.b).y1(p => y(p.v))).attr('fill', 'url(#gvarea)');
+    svg.append('path').datum(pts).attr('d', d3.line().x(p => x(p.t)).y(p => y(p.v))).attr('fill', 'none').attr('stroke', 'var(--def)').attr('stroke-width', 2).attr('stroke-linejoin', 'round');
+    const bis = d3.bisector(p => p.t).center;
+    const marks = d3.groups(all.filter(t => new Date(t.tx_date + 'T00:00:00Z') >= pts[0].t), t => t.tx_date + '|' + t.side);
+    const tip = el('div', { class: 'pr-tip', hidden: true }); box.append(tip);
+    marks.forEach(([k, trs]) => {
+      const [date, side] = k.split('|'); const t = new Date(date + 'T00:00:00Z'); const p = pts[bis(pts, t)]; if (!p) return;
+      const yy = y(p.v) + (side === 'buy' ? 12 : -12);
+      const sym = svg.append('path').attr('d', d3.symbol(d3.symbolTriangle, 60)()).attr('transform', `translate(${x(t)},${yy}) rotate(${side === 'buy' ? 0 : 180})`)
+        .attr('fill', side === 'buy' ? 'var(--color-ok)' : 'var(--color-bad)').attr('fill-opacity', .85).attr('stroke', 'var(--color-panel)').style('cursor', 'default');
+      sym.on('pointermove', (ev) => { const [mx, my] = d3.pointer(ev, box); tip.replaceChildren(el('div', { class: 'd', text: `${fmtD(date)} · ${side === 'buy' ? 'Purchase' : 'Sale'}` }), ...[...new Set(trs.map(z => z.official))].slice(0, 5).map(n => el('div', { text: n }))); tip.hidden = false; tip.style.left = Math.min(mx + 10, box.clientWidth - tip.offsetWidth) + 'px'; tip.style.top = Math.max(my - 40, 0) + 'px'; })
+        .on('pointerleave', () => { tip.hidden = true; });
+    });
+  } else box.append(el('div', { class: 'gv-empty', text: 'No price history loaded for this stock.' }));
+  // officials list (in the selected period)
+  document.getElementById('gv-off-sub').textContent = `${r.officials} official${r.officials > 1 ? 's' : ''} · last ${GV.period} days · all trade types`;
+  const byO = d3.groups(r.trs, t => t.official_id).sort((a, b) => b[1].length - a[1].length);
+  list.replaceChildren(...byO.map(([, trs]) => {
+    const o = trs[0];
+    return el('div', { class: 'gv-o', style: `--c: ${GROUP_COLOR[o.group] || 'var(--def)'}` },
+      el('div', { class: 't' }, el('b', { text: o.official }), el('span', { text: o.role })),
+      el('ul', {}, ...trs.sort((a, b) => b.tx_date.localeCompare(a.tx_date)).slice(0, 8).map(t => el('li', {},
+        el('span', { class: t.side === 'buy' ? 'up' : 'dn', text: t.side === 'buy' ? 'Bought' : 'Sold' }),
+        el('span', { text: `traded ${fmtD(t.tx_date)}` }), el('span', { text: `disclosed ${t.disclosed ? fmtD(t.disclosed) : 'in annual report'}` }),
+        el('span', { text: fmtAmt(t) + (t.owner && t.owner !== 'Self' ? ` · ${t.owner}` : '') }),
+        el('a', { href: t.link, target: '_blank', rel: 'noopener', text: t.source + ' ↗' })))),
+      trs.length > 8 ? el('span', { class: 'pr-note', text: `+ ${trs.length - 8} more transactions` }) : null);
+  }));
+}
+
+sortable('scr-table', 'scr', drawScreener); sortable('ipo-table', 'ipo', drawIPO); sortable('hist-table', 'hist', drawHistory);
+dash.onData(() => { try { render(); } catch (e) { console.error(e); throw e; } });
+})();
+</script>
