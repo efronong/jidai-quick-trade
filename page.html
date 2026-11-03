@@ -241,6 +241,16 @@
 .pr-more { position: absolute; right: 4px; top: calc(100% + 6px); z-index: 25; display: grid; gap: 4px; padding: 6px; border-radius: 14px; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); box-shadow: var(--cds-shadow-popover); }
 .pr-more button { border: 0; background: transparent; text-align: left; padding: 10px 14px; border-radius: 10px; font-weight: 600; }
 .pr-more button[aria-current="true"] { background: color-mix(in srgb, var(--sec) 16%, transparent); }
+
+/* Style switcher: only the current choice shows; the rest appear on hover (or tap on the current one) */
+.pr-tabs:not(.open) .pr-tab:not([aria-selected="true"]) { display: none; }
+@media (hover: hover) { .pr-tabs:hover .pr-tab, .pr-tabs:has(.pr-tab:focus-visible) .pr-tab { display: inline-block !important; } }
+.pr-tabs:not(.open) .pr-tab[aria-selected="true"]::after { content: " ▾"; font-size: .8em; opacity: .85; }
+@media (hover: hover) { .pr-tabs:hover .pr-tab[aria-selected="true"]::after, .pr-tabs:has(.pr-tab:focus-visible) .pr-tab[aria-selected="true"]::after { content: ""; } }
+.pr[data-device="mobile"] .pr-bnav:not(.open) { display: flex; width: fit-content; }
+.pr[data-device="mobile"] .pr-bnav:not(.open) > button:not([aria-current="true"]) { display: none; }
+.pr[data-device="mobile"] .pr-bnav:not(.open) > button[aria-current="true"] { min-width: 96px; padding: 4px 14px; grid-auto-flow: column; gap: 6px; align-items: center; }
+.pr[data-device="mobile"] .pr-bnav:not(.open) > button[aria-current="true"]::after { content: "▾"; font-size: 11px; }
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 @media (prefers-reduced-motion: no-preference) {
   .pr-card.in { animation: prIn var(--cds-dur-slow) var(--cds-ease-out) both; }
@@ -502,13 +512,21 @@ setInterval(() => { try { drawClocks(); } catch (e) {} }, 30000);
 /* ---------- controls ---------- */
 const tabs = [...document.querySelectorAll('.pr-tab')];
 const goStyle = (st) => { state.style = st; if (DEF_RANGE[st]) state.range = DEF_RANGE[st]; state.sym = null; dash.setLink('tab-' + st); render(); };
-tabs.forEach(b => b.addEventListener('click', () => goStyle(b.dataset.style)));
+const tabBox = document.getElementById('tabs'), bnav = document.getElementById('bnav');
+tabs.forEach(b => b.addEventListener('click', (ev) => {
+  if (b.dataset.style === state.style) { ev.stopPropagation(); tabBox.classList.toggle('open'); return; }
+  tabBox.classList.remove('open'); goStyle(b.dataset.style);
+}));
 const bmore = document.getElementById('bmore');
 document.querySelectorAll('#bnav button').forEach(b => b.addEventListener('click', (ev) => {
+  if (b.parentElement === bnav && !bnav.classList.contains('open')) { ev.stopPropagation(); bnav.classList.add('open'); return; }
   if (b.dataset.more) { ev.stopPropagation(); bmore.hidden = !bmore.hidden; return; }
-  bmore.hidden = true; goStyle(b.dataset.style);
+  bmore.hidden = true; bnav.classList.remove('open'); goStyle(b.dataset.style);
 }));
-document.addEventListener('click', (ev) => { if (!bmore.hidden && !ev.target.closest('#bnav')) bmore.hidden = true; });
+document.addEventListener('click', (ev) => {
+  if (!ev.target.closest('#bnav')) { bmore.hidden = true; bnav.classList.remove('open'); }
+  if (!ev.target.closest('#tabs')) tabBox.classList.remove('open');
+});
 document.querySelectorAll('[data-sector]').forEach(b => b.addEventListener('click', () => { state.sector = b.dataset.sector; state.sym = null; render(); }));
 document.querySelectorAll('[data-market]').forEach(b => b.addEventListener('click', () => { state.market = b.dataset.market; state.sym = null; render(); }));
 document.querySelectorAll('#ranges button').forEach(b => b.addEventListener('click', () => { state.range = b.dataset.r; drawChart(); }));
@@ -634,7 +652,7 @@ function drawCards() {
     const lo = Math.min(pk.exp_low, 0), hi = Math.max(pk.exp_high, 0), sc = (v) => ((v - lo) / (hi - lo || 1)) * 100;
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('class', 'pr-spark'); svg.setAttribute('aria-hidden', 'true');
     const card = el('button', { class: 'pr-card in', style: `animation-delay:${i * 60}ms`, 'aria-pressed': String(pk.sym === state.sym) },
-      el('div', { class: 'top' }, el('div', {}, el('div', { class: 'pr-tk', text: pk.sym.replace('.SI', '') }), el('div', { class: 'pr-nm', text: s.name || '' })), el('span', { class: 'pr-rank', text: String(pk.rank) })),
+      el('div', { class: 'top' }, el('div', {}, el('div', { class: 'pr-tk', text: pk.sym.replace('.SI', '') }), el('div', { class: 'pr-nm', text: s.name || '' }))),
       el('div', { class: 'pr-px' }, el('strong', { text: money(s.price, s.currency) }), el('span', { class: 'pill ' + cls(s.chg_1d), text: fmtPct(s.chg_1d, 2) })),
       svg,
       el('div', { class: 'pr-exp' },
