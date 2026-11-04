@@ -18,7 +18,7 @@ HEAD = """<!doctype html>
 <style>
 /* Theme tokens (the Claude dashboard supplies these; here we define them for light and dark) */
 :root { color-scheme: light;
-  --color-bg: #f6f7fb; --color-panel: #ffffff; --color-fg: #14161f; --color-fg-muted: #5f6475; --color-border-line: #e2e5ee;
+  --color-bg: #f6f7fb; --color-panel: rgba(255,255,255,.84); --color-fg: #14161f; --color-fg-muted: #5f6475; --color-border-line: #e2e5ee;
   --color-ok: #1f9d55; --color-bad: #d63a3a; --color-warn: #b7791f;
   --cds-surface-popover: #ffffff; --cds-border: #dfe3ec; --cds-shadow-popover: 0 8px 24px rgba(20,22,31,.14); --cds-text-secondary: #5f6475;
   --cds-chart-grid: #eceff5; --cds-chart-axis: #b9bfcc; --cds-chart-reference: #9aa1b1;
@@ -28,12 +28,12 @@ HEAD = """<!doctype html>
   --cds-dur-slow: 320ms; --cds-ease-out: cubic-bezier(.2,.8,.2,1);
   --font-anthropic-sans: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif; --font-anthropic-serif: 'DM Sans', system-ui, sans-serif; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark;
-  --color-bg: #0f1117; --color-panel: #171a23; --color-fg: #eef0f6; --color-fg-muted: #9aa0b2; --color-border-line: #272b38;
+  --color-bg: #0f1117; --color-panel: rgba(23,26,35,.8); --color-fg: #eef0f6; --color-fg-muted: #9aa0b2; --color-border-line: #272b38;
   --color-ok: #3ccf7a; --color-bad: #ff6b6b; --color-warn: #f0b429;
   --cds-surface-popover: #1d2130; --cds-border: #2e3344; --cds-shadow-popover: 0 8px 24px rgba(0,0,0,.5); --cds-text-secondary: #9aa0b2;
   --cds-chart-grid: #222634; --cds-chart-axis: #3a4052; --cds-chart-reference: #586078; } }
 :root[data-theme="dark"] { color-scheme: dark;
-  --color-bg: #0f1117; --color-panel: #171a23; --color-fg: #eef0f6; --color-fg-muted: #9aa0b2; --color-border-line: #272b38;
+  --color-bg: #0f1117; --color-panel: rgba(23,26,35,.8); --color-fg: #eef0f6; --color-fg-muted: #9aa0b2; --color-border-line: #272b38;
   --color-ok: #3ccf7a; --color-bad: #ff6b6b; --color-warn: #f0b429;
   --cds-surface-popover: #1d2130; --cds-border: #2e3344; --cds-shadow-popover: 0 8px 24px rgba(0,0,0,.5); --cds-text-secondary: #9aa0b2;
   --cds-chart-grid: #222634; --cds-chart-axis: #3a4052; --cds-chart-reference: #586078; }
@@ -42,6 +42,13 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 [hidden] { display: none !important; }
 .dash-skeleton { color: transparent !important; background: linear-gradient(90deg, var(--color-border-line), var(--color-panel), var(--color-border-line)); background-size: 200% 100%; border-radius: 6px; animation: sk 1.4s linear infinite; }
 @keyframes sk { to { background-position: -200% 0; } }
+/* Background artwork: rising red trend line, fixed behind the page */
+body::before { content: ""; position: fixed; inset: auto 0 0 0; height: 70vh; z-index: 0; pointer-events: none;
+  background: url(assets/bg-trend.webp) no-repeat right bottom / min(1500px, 115vw) auto; opacity: .38; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body::before { opacity: .7; } }
+:root[data-theme="dark"] body::before { opacity: .7; }
+@media (max-width: 640px) { body::before { height: 55vh; background-size: 230vw auto; background-position: 65% bottom; } }
+#dash-root { position: relative; z-index: 1; }
 .live-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; font-size: 12.5px; color: var(--color-fg-muted); }
 .live-bar .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--color-ok); margin-right: 6px; vertical-align: middle; }
 .live-bar .dot.stale { background: var(--color-warn); }
