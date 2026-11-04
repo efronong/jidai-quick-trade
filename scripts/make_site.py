@@ -43,11 +43,11 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 .dash-skeleton { color: transparent !important; background: linear-gradient(90deg, var(--color-border-line), var(--color-panel), var(--color-border-line)); background-size: 200% 100%; border-radius: 6px; animation: sk 1.4s linear infinite; }
 @keyframes sk { to { background-position: -200% 0; } }
 /* Background artwork: rising red trend line, fixed behind the page */
-body::before { content: ""; position: fixed; inset: auto 0 0 0; height: 70vh; z-index: 0; pointer-events: none;
-  background: url(assets/bg-trend.webp) no-repeat right bottom / min(1500px, 115vw) auto; opacity: .38; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body::before { opacity: .7; } }
-:root[data-theme="dark"] body::before { opacity: .7; }
-@media (max-width: 640px) { body::before { height: 55vh; background-size: 230vw auto; background-position: 65% bottom; } }
+body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: url(assets/bg-trend.webp) no-repeat center 58% / min(1400px, 105vw) auto; opacity: .22; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body::before { opacity: .42; } }
+:root[data-theme="dark"] body::before { opacity: .42; }
+@media (max-width: 640px) { body::before { background-size: 210vw auto; background-position: 62% 55%; } }
 #dash-root { position: relative; z-index: 1; }
 .live-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; font-size: 12.5px; color: var(--color-fg-muted); }
 .live-bar .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--color-ok); margin-right: 6px; vertical-align: middle; }
