@@ -57,7 +57,10 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 .live-bar button .spin { display: inline-block; }
 .live-bar button.busy .spin { animation: rot 0.9s linear infinite; }
 @keyframes rot { to { transform: rotate(360deg); } }
-.live-bar .tg { display: inline-flex; gap: 6px; align-items: center; }
+.live-bar .tg { display: inline-flex; gap: 8px; align-items: center; }
+.ok-tick { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font-size: 13px; font-weight: 800; color: #fff; background: var(--color-ok); opacity: 0; transform: scale(.6); transition: opacity .35s ease, transform .35s cubic-bezier(.2,.8,.2,1.4); }
+.ok-tick.show { opacity: 1; transform: scale(1); }
+@media (prefers-reduced-motion: reduce) { .ok-tick { transition: opacity .2s ease; transform: none; } }
 </style>
 <script src="assets/d3.min.js"></script>
 <script src="assets/dash-shim.js"></script>
@@ -66,7 +69,7 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 <div id="dash-root">
 <div class="live-bar" id="live-bar">
   <span><span class="dot" id="live-dot"></span><span id="live-text">Loading prices…</span></span>
-  <span class="tg"><button id="live-refresh" type="button" aria-label="Refresh prices"><span class="spin">⟳</span> Refresh</button></span>
+  <span class="tg"><button id="live-refresh" type="button" aria-label="Refresh prices"><span class="spin">⟳</span> Refresh</button><span class="ok-tick" id="live-ok" aria-hidden="true">✓</span></span>
 </div>
 """
 TAIL = """
@@ -84,8 +87,11 @@ TAIL = """
     txt.textContent = `Prices from ${fmt.format(t)} SGT · ${age < 1 ? 'just now' : Math.round(age) + ' min ago'} · updates every 10 min in market hours`;
   }
   window.dash.onData(stamp);
-  async function refresh() { btn.disabled = true; btn.classList.add('busy'); try { await window.dash.refreshAll(); } finally { btn.disabled = false; btn.classList.remove('busy'); stamp(); } }
-  btn.addEventListener('click', refresh);
+  const tick = document.getElementById('live-ok'); let tickT;
+  async function refresh(manual) { btn.disabled = true; btn.classList.add('busy'); let ok = false;
+    try { await window.dash.refreshAll(); ok = true; } finally { btn.disabled = false; btn.classList.remove('busy'); stamp(); }
+    if (manual === true && ok) { clearTimeout(tickT); tick.classList.add('show'); tickT = setTimeout(() => tick.classList.remove('show'), 1800); } }
+  btn.addEventListener('click', () => refresh(true));
   setInterval(() => { if (!document.hidden) refresh(); }, 120000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
   setInterval(stamp, 30000);
