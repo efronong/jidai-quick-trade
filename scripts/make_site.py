@@ -58,7 +58,7 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 .live-bar button.busy .spin { animation: rot 0.9s linear infinite; }
 @keyframes rot { to { transform: rotate(360deg); } }
 .live-bar .tg { display: inline-flex; gap: 8px; align-items: center; }
-.ok-tick { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font-size: 13px; font-weight: 800; color: #fff; background: var(--color-ok); opacity: 0; transform: scale(.6); transition: opacity .35s ease, transform .35s cubic-bezier(.2,.8,.2,1.4); }
+.ok-tick { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; font-size: 13px; font-weight: 800; color: #fff; background: #4dabf7; box-shadow: 0 0 10px rgba(77,171,247,.55); opacity: 0; transform: scale(.6); transition: opacity .35s ease, transform .35s cubic-bezier(.2,.8,.2,1.4); }
 .ok-tick.show { opacity: 1; transform: scale(1); }
 @media (prefers-reduced-motion: reduce) { .ok-tick { transition: opacity .2s ease; transform: none; } }
 </style>
