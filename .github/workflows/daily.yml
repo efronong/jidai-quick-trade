@@ -26,7 +26,11 @@ jobs:
       - name: Restore yesterday's daily files
         run: |
           if git fetch --depth=1 origin data; then git checkout FETCH_HEAD -- d && cp d/*.json data/ && rm -rf d; fi
+      - name: Price snapshot for Claude's daily analysis
+        continue-on-error: true
+        run: python scripts/fetch_yahoo.py
       - name: Analyst data, earnings dates, headlines
+        continue-on-error: true
         run: python scripts/fetch_fundamentals.py
       - name: Government trades
         continue-on-error: true
@@ -42,14 +46,12 @@ jobs:
           json.dump(t, open('out/gov_trades.json', 'w'), separators=(',', ':'))
           PY
           cp out/gov_trades.json out/gov_stocks.json out/gov_prices.json out/gov_sources.json data/
-      - name: Price snapshot for Claude's daily analysis
-        run: python scripts/fetch_yahoo.py
       - name: Publish to the data branch
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           rm -rf pub && mkdir -p pub/d
-          cp data/fundamentals.json data/gov_trades.json data/gov_stocks.json data/gov_prices.json data/gov_sources.json data/gov_filings.json data/gov_meta_cache.json raw/collect.json pub/d/ 2>/dev/null || true
+          cp data/fundamentals.json data/gov_trades.json data/gov_stocks.json data/gov_prices.json data/gov_sources.json data/gov_filings.json data/gov_meta_cache.json data/gov_congress_raw.json raw/collect.json pub/d/ 2>/dev/null || true
           cd pub
           git init -q -b data
           git config user.name "jidai-bot"; git config user.email "jidai-bot@users.noreply.github.com"

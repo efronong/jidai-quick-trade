@@ -128,6 +128,8 @@ for tk, arr in gp.items():
 json.dump(prices, open('out/gov_prices.json', 'w'), separators=(',', ':'))
 def rng(g):
     xs = [t for t in out if t['group'] in g]
+    if not xs:
+        return None, None, 0
     return min(t['tx_date'] for t in xs), max(t['tx_date'] for t in xs), len(xs)
 UPDATED = sys.argv[2] if len(sys.argv) > 2 else ASOF
 src = [{'source': 'as_of', 'as_of': ASOF, 'updated': UPDATED, 'url': '', 'covers': '', 'tx_from': None, 'tx_to': None, 'records': len(out), 'note': ''}]

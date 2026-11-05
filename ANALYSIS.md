@@ -4,8 +4,9 @@ Prices and government trades are refreshed by GitHub Actions. This procedure add
 forecast ranges, events, IPO list and the @aleabitoreddit summaries.
 
 1. Attach the repository with push access (add_repo), clone it to /home/claude/jidai, `cd` there.
-2. `git fetch --depth=1 origin data && git checkout FETCH_HEAD -- d && mkdir -p raw out && cp d/collect.json raw/collect.json`
-   (the 05:40 SGT price snapshot from `daily.yml`). Read the screen with a short script: returns, RSI, distance from high,
+2. `mkdir -p raw out && git fetch --depth=1 origin snapshot && git checkout FETCH_HEAD -- d && cp d/collect.json raw/collect.json`
+   (the latest price snapshot, saved by every live price run). If that branch is missing, use the `data` branch the same way.
+   The snapshot already holds analyst data and headlines. Read the screen with a short script: returns, RSI, distance from high,
    analyst upside, revenue growth, forward P/E, next earnings, volume ratio, today's move — per sector and market.
 3. Research with WebSearch / WebFetch: overall US market, each of the six sectors, SGX/STI, the Fed and macro calendar,
    big single-stock moves in the snapshot, the IPO calendar (stockanalysis.com/ipos/calendar/ and /ipos/2026/).

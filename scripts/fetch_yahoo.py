@@ -37,9 +37,26 @@ def num(x):
         return None
 
 
+def dl(syms, **kw):
+    """Download, then retry tickers Yahoo refused (it rate-limits shared cloud servers) after a pause."""
+    import time
+    df = yf.download(syms, group_by='ticker', auto_adjust=False, progress=False, threads=True, **kw)
+    for wait in (40, 90):
+        miss = [s for s in syms if frame(df, s) is None]
+        if len(miss) <= 2:
+            break
+        time.sleep(wait)
+        more = yf.download(miss, group_by='ticker', auto_adjust=False, progress=False, threads=False, **kw)
+        if more is not None and not more.empty:
+            if not isinstance(more.columns, pd.MultiIndex):
+                more.columns = pd.MultiIndex.from_product([miss[:1], more.columns])
+            df = pd.concat([df.drop(columns=[c for c in df.columns if c[0] in miss], errors='ignore'), more], axis=1) if df is not None and not df.empty else more
+    return df
+
+
 def main():
-    daily = yf.download(SYMS, period='5y', interval='1d', group_by='ticker', auto_adjust=False, progress=False, threads=True)
-    intra = yf.download(SYMS, period='1d', interval='5m', group_by='ticker', auto_adjust=False, progress=False, threads=True, prepost=False)
+    daily = dl(SYMS, period='5y', interval='1d')
+    intra = dl(SYMS, period='1d', interval='5m', prepost=False)
     q, failed = {}, []
     for s in SYMS:
         d = frame(daily, s)

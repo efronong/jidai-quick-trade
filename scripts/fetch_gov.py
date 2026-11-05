@@ -81,6 +81,14 @@ def congress():
             oldest = min(oldest, (o.get('pubDate') or '9999')[:10])
         page += 1
         time.sleep(0.6)
+    cache = os.path.join(DATA, 'gov_congress_raw.json')
+    if not trades:
+        if os.path.exists(cache):
+            d = json.load(open(cache))
+            json.dump(d, open(os.path.join(RAW, 'congress.json'), 'w'))
+            print('Capitol Trades unreachable; reusing the last saved congressional trades', len(d['rows']))
+            return d['pol'], d['rows']
+        sys.exit('Capitol Trades unreachable and no saved data')
     pols, rows = {}, []
     for o in trades.values():
         tk = (o.get('issuer') or {}).get('issuerTicker')
@@ -96,6 +104,7 @@ def congress():
     for r in rows:
         r[1] = pi[r[1]]
     json.dump({'pol': plist, 'rows': rows}, open(os.path.join(RAW, 'congress.json'), 'w'))
+    json.dump({'pol': plist, 'rows': rows}, open(cache, 'w'))
     print('congress trades', len(rows), 'pages', page - 1, 'oldest', oldest)
     return plist, rows
 
