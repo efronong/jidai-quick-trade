@@ -44,9 +44,9 @@ html, body { margin: 0; background: var(--color-bg); color: var(--color-fg); fon
 @keyframes sk { to { background-position: -200% 0; } }
 /* Background artwork: rising red trend line, fixed behind the page */
 body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background: url(assets/bg-trend.webp) no-repeat center 58% / min(1400px, 105vw) auto; opacity: .22; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body::before { opacity: .42; } }
-:root[data-theme="dark"] body::before { opacity: .42; }
+  background: url(assets/bg-trend.webp) no-repeat center 58% / min(1400px, 105vw) auto; opacity: .4; filter: saturate(1.3) contrast(1.1); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body::before { opacity: .5; } }
+:root[data-theme="dark"] body::before { opacity: .5; }
 @media (max-width: 640px) { body::before { background-size: 210vw auto; background-position: 62% 55%; } }
 #dash-root { position: relative; z-index: 1; }
 .live-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; font-size: 12.5px; color: var(--color-fg-muted); }
