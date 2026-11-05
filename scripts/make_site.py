@@ -47,6 +47,9 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
   background: url(assets/bg-trend.webp) no-repeat center 58% / min(1400px, 105vw) auto; opacity: .4; filter: saturate(1.3) contrast(1.1); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body::before { opacity: .5; } }
 :root[data-theme="dark"] body::before { opacity: .5; }
+#bg-flash { position: fixed; z-index: 0; pointer-events: none; left: 0; top: 0; width: 0; height: 0; }
+#bg-flash svg { width: 100%; height: 100%; overflow: visible; display: block; }
+@media (prefers-reduced-motion: reduce) { #bg-flash { display: none; } }
 @media (max-width: 640px) { body::before { background-size: 210vw auto; background-position: 62% 55%; } }
 #dash-root { position: relative; z-index: 1; }
 .live-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; font-size: 12.5px; color: var(--color-fg-muted); }
@@ -66,6 +69,20 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 <script src="assets/dash-shim.js"></script>
 </head>
 <body>
+<div id="bg-flash" aria-hidden="true"><svg viewBox="0 0 2000 667" preserveAspectRatio="none">
+<defs>
+<radialGradient id="sf-glow"><stop offset="0" stop-color="#ffffff"/><stop offset=".25" stop-color="#bfeaff"/><stop offset=".6" stop-color="#4dc3ff" stop-opacity=".45"/><stop offset="1" stop-color="#4dc3ff" stop-opacity="0"/></radialGradient>
+<linearGradient id="sf-trail" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="2000" y2="0"><stop offset="0" stop-color="#9be3ff"/><stop offset="1" stop-color="#ffffff"/></linearGradient>
+<filter id="sf-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>
+</defs>
+<path id="sf-path" d="M300,617 L590,548 L668,572 L870,481 L928,491 L1005,435 L1080,466 L1220,372 L1293,413 L1323,398 L1350,409 L1405,355 L1425,362 L1530,262 L1612,311 L1672,274 L1733,287 L1893,128" fill="none" stroke="none" pathLength="1000"/>
+<path id="sf-trail" d="M300,617 L590,548 L668,572 L870,481 L928,491 L1005,435 L1080,466 L1220,372 L1293,413 L1323,398 L1350,409 L1405,355 L1425,362 L1530,262 L1612,311 L1672,274 L1733,287 L1893,128" pathLength="1000" fill="none" stroke="url(#sf-trail)" stroke-width="5" stroke-linecap="round" filter="url(#sf-blur)" stroke-dasharray="70 1100" stroke-dashoffset="70" opacity="0"/>
+<g id="sf-star" opacity="0">
+<circle r="34" fill="url(#sf-glow)"/>
+<path d="M0,-30 L5,-5 L30,0 L5,5 L0,30 L-5,5 L-30,0 L-5,-5 Z" fill="#ffffff"><animateTransform attributeName="transform" type="rotate" from="0" to="180" dur="2.6s" repeatCount="indefinite"/></path>
+<circle r="5" fill="#ffffff"/>
+</g>
+</svg></div>
 <div id="dash-root">
 <div class="live-bar" id="live-bar">
   <span><span class="dot" id="live-dot"></span><span id="live-text">Loading prices…</span></span>
@@ -75,6 +92,35 @@ body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-event
 TAIL = """
 </div>
 <script>
+
+(() => {
+  // Shining star: runs along the background trend line, start to end, once a minute.
+  const box = document.getElementById('bg-flash'); if (!box || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const path = document.getElementById('sf-path'), trail = document.getElementById('sf-trail'), star = document.getElementById('sf-star');
+  function place() { // keep the overlay exactly on top of the background picture (same size/position rules as the CSS)
+    const vw = innerWidth, vh = innerHeight, mob = vw <= 640;
+    const w = mob ? 2.1 * vw : Math.min(1400, 1.05 * vw), h = w * 667 / 2000;
+    const x = (vw - w) * (mob ? .62 : .5), y = (vh - h) * (mob ? .55 : .58);
+    Object.assign(box.style, { left: x + 'px', top: y + 'px', width: w + 'px', height: h + 'px' });
+  }
+  place(); addEventListener('resize', place);
+  const L = path.getTotalLength(), DUR = 2600;
+  function run() {
+    if (document.hidden) return;
+    const t0 = performance.now();
+    function step(now) {
+      const k = Math.min(1, (now - t0) / DUR), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      const p = path.getPointAtLength(e * L);
+      star.setAttribute('transform', `translate(${p.x},${p.y})`);
+      const fade = k < .08 ? k / .08 : k > .9 ? (1 - k) / .1 : 1;
+      star.setAttribute('opacity', fade); trail.setAttribute('opacity', fade * .9);
+      trail.setAttribute('stroke-dashoffset', 70 - e * 1000);
+      if (k < 1) requestAnimationFrame(step); else { star.setAttribute('opacity', 0); trail.setAttribute('opacity', 0); }
+    }
+    requestAnimationFrame(step);
+  }
+  setTimeout(run, 1500); setInterval(run, 60000);
+})();
 (() => {
   // Auto-refresh: re-read the data files every 2 minutes while the page is open; the Refresh button does it now.
   const btn = document.getElementById('live-refresh'), txt = document.getElementById('live-text'), dot = document.getElementById('live-dot');
