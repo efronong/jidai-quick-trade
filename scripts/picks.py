@@ -1,268 +1,268 @@
-# Analyst picks for 2026-11-11 (snapshot: US close Nov 10, SGX close Nov 10). Fields: sym, thesis, catalyst, risk, (low, base, high) % expected move, conviction, setup
+# Analyst picks for 2026-11-12 (snapshot: US midday Nov 11 ~12:25 ET, SGX close Nov 11). Fields: sym, thesis, catalyst, risk, (low, base, high) % expected move, conviction, setup
 # Horizons: long = 12 months, swing = ~4 weeks, intraday = rest of session (US) / next session (SGX), ipo = 6 months.
-# Context: Nov 10: October CPI +0.4% (core +0.3%), both above forecasts. 10-yr yield +14 bp to ~5.0%. Dec hike odds ~90% (CME, per WSJ); Waller says 50 bp should be considered.
-# S&P -0.4% to 7,521, Nasdaq -0.7%, Dow -0.3%. Nvidia -5.5% (second day) on a shareholder lawsuit over the CEO's ties to a suspected spy and a report that $7.5B of its chips reached China.
-# Hims -16.5% after cutting its EBITDA outlook. CoreWeave beat and raised after the close (~+2% late). TSMC October sales +60% y/y. STI +1.5% to 5,259 (AEM +10%, Yangzijiang +5.5%).
-# Anthropic set its IPO range at $70-78 (825M shares, up to ~$64B). Nov 11 is Veterans Day: US stocks open, bond market shut.
+# Context: Nov 11: AI trade rebounded after CoreWeave's beat-and-raise (2026 revenue guide $13.0-13.3B, funding via prepayments and contract-backed debt, no unsecured debt).
+# Close: S&P +1.3% to 7,619, Nasdaq +1.6% to 25,466 (erased post-election losses), Dow +0.5%. VIX 17.5. CoreWeave +24.7%; Nvidia +2.9% to $173.73 despite a Baird downgrade to Neutral.
+# Memory, optics and storage led (Micron, Sandisk, Seagate, Lumentum up 10%+ midday). Bloom Energy +16%. Talen signed a 750 MW, $100M/yr capacity deal.
+# Bond market shut (Veterans Day); 10-yr ~5.0%. Dec hike odds ~90% (CME); Goldman and UBS now expect hikes in Dec and March; Bowman says more hikes may be needed.
+# STI +0.6% to 5,290; Venture +5.2% on a 22% Q3 profit rise. Anthropic launched its IPO roadshow ($70-78); pricing expected week of Nov 16. WTI ~$86.
 P = {}
 
 # ---------- AI & chips ----------
 P[('long','ai','US')] = [
- ('TSM', "Makes almost every leading AI chip. October sales +60% y/y and +15% m/m; about 17x forward earnings, 18% below its high. Rose 2% while chips fell.",
-  "November sales (~Dec 10); Q4 results Jan 14", "Taiwan geopolitics; AI capex cuts", (-18,18,40), 'High', 'Core holding'),
- ('NVDA', "Revenue +106% at about 10.5x forward earnings, the cheapest big AI chip stock. Down 18% in five days (RSI 19), but now carries legal and export-control risk, not just a headline.",
-  "Q3 results Nov 17", "Shareholder lawsuit; report that $7.5B of chips reached China; board probe of the CEO", (-30,20,50), 'Medium', 'Quality at a discount, higher risk'),
- ('AVGO', "Custom AI chips plus networking: revenue +86% at about 17x forward earnings, 31% below its high. Rose 4% on a down day for chips.",
-  "Q4 results Dec 9", "Lumpy custom-chip orders; customer concentration", (-22,20,45), 'Medium', 'Pullback in a leader'),
- ('MU', "Memory is still the tightest part of AI servers: revenue +379% at about 3.4x forward earnings, 40% off its high. New contracts carry price floors.",
-  "FQ1 results Dec 23", "Peak-cycle earnings; memory falls hard when prices turn", (-38,22,62), 'Medium', 'Cycle leader'),
- ('COHR', "Record quarter and a ~$20B five-year optics deal; 50% below its high at about 13x forward earnings. Gave back 4.6% today.",
-  "First $3B quarter targeted by FY27 end", "8% daily swings; capex keeps rising", (-32,24,62), 'Medium', 'Beat-and-sold'),
+ ('TSM', "Makes almost every leading AI chip. October sales +60% y/y (record); about 18x forward earnings, 14% below its high. CEO says demand is still far above supply.",
+  "November sales (~Dec 10); Q4 results Jan 14", "Taiwan geopolitics; overseas fabs dilute margins", (-18,17,38), 'High', 'Core holding'),
+ ('NVDA', "Revenue +106% at about 11x forward earnings, the cheapest big AI chip stock. Bounced 2.9% on Nov 11 but is still 26% off its high; Baird cut it to Neutral on CEO and China uncertainty.",
+  "Q3 results Nov 17", "Shareholder lawsuit; China-chip report; board probe of the CEO", (-30,20,50), 'Medium', 'Quality at a discount, higher risk'),
+ ('AVGO', "Custom AI chips plus networking: revenue +86% at about 18x forward earnings, 26% below its high. Has held up best through the selloff.",
+  "Q4 results Dec 9", "Lumpy custom-chip orders; customer concentration", (-22,18,42), 'Medium', 'Pullback in a leader'),
+ ('MU', "Memory is still the tightest part of AI servers: revenue +379% at about 4x forward earnings, 32% off its high. Jumped ~14% on Nov 11; Goldman calls it a buy, BofA dropped it from its top picks.",
+  "FQ1 results Dec 23", "Peak-cycle earnings; memory falls hard when prices turn", (-38,20,58), 'Medium', 'Cycle leader'),
+ ('COHR', "Record quarter and a ~$20B five-year optics deal; 43% below its high at about 15x forward earnings. Up 24% in five days.",
+  "First $3B quarter targeted by FY27 end", "8% daily swings; capex keeps rising", (-32,20,55), 'Medium', 'Optics rebound'),
 ]
 P[('long','ai','SGX')] = [
- ('AWX.SI', "AEM jumped 10% to S$6.85 as Singapore tech rebounded, but is still 39% below its high and up ~300% this year; analysts rate it Strong Buy.",
+ ('AWX.SI', "AEM is up ~300% this year but 37% below its high; analysts rate it Strong Buy with about 100% upside.",
   "Q3 business update (Nov)", "One large customer; 7% daily swings", (-38,18,55), 'Medium', 'SGX AI leader'),
- ('558.SI', "UMS makes precision parts for chip-equipment makers: revenue +29%, 40% off its high, about 18x earnings. Rose 4% today.",
-  "Q3 results mid-November; Applied Materials results Nov 12", "Tied to Applied Materials spending", (-30,15,45), 'Medium', 'Equipment supplier'),
- ('5DD.SI', "Micro-Mechanics makes precision tools for chip assembly and test: revenue +45%, 42% off its high.",
+ ('V03.SI', "Venture's Q3 profit rose 22% to S$67.8M; RHB raised its target to S$21.97 and DBS sees S$22.90. Net cash, about 16x earnings, low volatility.",
+  "Analyst upgrades after Q3", "Slow revenue growth (+7%)", (-12,13,26), 'High', 'Steady value'),
+ ('558.SI', "UMS makes precision parts for chip-equipment makers: revenue +61%, 35% off its high, about 19x earnings. Rose 9% on Nov 11 after a stronger quarter.",
+  "Applied Materials results Nov 12", "Tied to Applied Materials spending", (-30,15,45), 'Medium', 'Equipment supplier'),
+ ('5DD.SI', "Micro-Mechanics makes precision tools for chip assembly and test: revenue +45%, 39% off its high.",
   "Q1 FY27 results (Nov)", "Small and thinly traded", (-24,14,36), 'Medium', 'Growth at a discount'),
- ('E28.SI', "Frencken builds modules for chip and medical equipment. 49% off its high at about 15x earnings.",
-  "Q3 business update (Nov)", "Flat revenue so far this year", (-25,14,38), 'Medium', 'Recovery'),
- ('V03.SI', "Venture builds electronics for chip-equipment, medical and AI-server makers. Net cash, about 16x earnings, low volatility.",
-  "Q3 business update (Nov)", "Slow growth (+7%)", (-12,10,22), 'Medium', 'Steady value'),
+ ('E28.SI', "Frencken builds modules for chip and medical equipment. 47% off its high at about 16x earnings; rose 6% on Nov 11.",
+  "Q3 business update (Nov)", "Flat revenue so far this year", (-25,13,36), 'Medium', 'Recovery'),
 ]
 P[('swing','ai','US')] = [
- ('NVDA', "RSI 19 and down 18% in five days, a week before results. Oversold, but each new legal or China headline can push it lower first.",
-  "Q3 results Nov 17", "More lawsuit or export-control news", (-18,6,20), 'Speculative', 'Oversold into earnings'),
- ('LITE', "Marvell is buying Lumentum for 4.5 Marvell shares each. At today's prices that is worth about 19% more than LITE's price.",
-  "Spread narrows if MRVL recovers", "Regulatory delay (incl. China); MRVL falls again", (-15,7,20), 'Medium', 'Merger spread'),
- ('AVGO', "Rose 4% on a weak tape (RSI 48); the AI name least tied to the Nvidia story.",
-  "Q4 results Dec 9", "Rates at 5% hit growth multiples", (-12,5,15), 'Medium', 'Relative strength'),
- ('CRDO', "Credo: revenue +115% at about 13x forward earnings, 57% off its high; analysts see 119% upside.",
-  "Q2 results Nov 30", "Customer concentration; 8% daily swings", (-25,10,32), 'Speculative', 'Oversold growth'),
- ('CRWV', "CoreWeave beat Q3 (revenue $3.66B, smaller loss) and raised 2026 revenue guidance to $13.0-13.3B; 65% off its high.",
-  "Post-results analyst updates", "Capex raised to $37-39B; heavy interest costs", (-25,8,30), 'Speculative', 'Beat and raise'),
+ ('NVDA', "RSI 29 a week before results, on twice its normal volume. Lagged the Nov 11 rally, so the bad news may be largely priced; each new legal or China headline can still hit it.",
+  "Q3 results Nov 17", "More lawsuit or export-control news; Baird downgrade", (-16,6,20), 'Speculative', 'Oversold into earnings'),
+ ('CRWV', "CoreWeave rose ~25% after beating and raising; funding now leans on customer prepayments, with no new unsecured debt. Still 56% off its high.",
+  "Analyst target updates; Nvidia results", "Capex $37-39B; 9% daily swings", (-25,8,32), 'Speculative', 'Beat and raise'),
+ ('LITE', "Marvell is buying Lumentum for 4.5 Marvell shares each. At snapshot prices that is worth about 16% more than LITE's price.",
+  "Spread narrows if the deal clears", "Regulatory delay (incl. China); MRVL falls again", (-15,7,20), 'Medium', 'Merger spread'),
+ ('MU', "Up ~14% on Nov 11 on memory-shortage news; RSI only 48 after a 13% monthly drop.",
+  "Price-floor contracts; FQ1 results Dec 23", "Fast reversal if AI capex fears return", (-15,7,22), 'Medium', 'Rebound'),
+ ('CRDO', "Credo: revenue +115% at about 15x forward earnings, 51% off its high; analysts see ~90% upside. Rose 13% on Nov 11.",
+  "Q2 results Dec 1", "Customer concentration; 8% daily swings", (-22,9,30), 'Speculative', 'Oversold growth'),
 ]
 P[('swing','ai','SGX')] = [
- ('AWX.SI', "AEM bounced 10% from oversold; still down 39% in a month.",
-  "Q3 update; US chips stabilising", "Bounce fades if Nvidia keeps falling", (-20,6,26), 'Speculative', 'Oversold rebound'),
- ('558.SI', "UMS rose 4% (RSI 31); analysts see about 90% upside.", "Q3 results mid-November", "Chip-equipment sentiment", (-18,6,22), 'Speculative', 'Oversold rebound'),
- ('E28.SI', "Frencken rose 3.5% from RSI 30.", "Q3 business update (Nov)", "No clear catalyst before results", (-15,5,17), 'Speculative', 'Oversold rebound'),
- ('5DD.SI', "Micro-Mechanics rose 3.2%; RSI 36.", "Q1 FY27 results (Nov)", "Thin order book", (-12,4,14), 'Medium', 'Rebound'),
- ('V03.SI', "Venture is the least volatile SGX tech name (RSI 38).", "Q3 business update (Nov)", "Flat revenue", (-8,4,10), 'Medium', 'Range trade'),
+ ('558.SI', "UMS rose 9% on very heavy volume after a stronger quarter; RSI 37.", "Applied Materials results Nov 12", "Chip-equipment sentiment", (-15,6,20), 'Medium', 'Earnings rebound'),
+ ('V03.SI', "Venture jumped 5% on a Q3 profit beat and target raises.", "Analyst upgrades", "Low growth", (-6,4,10), 'High', 'Post-earnings drift'),
+ ('AWX.SI', "AEM rose 3%; still down 35% in a month (RSI 36).",
+  "Q3 update; US chips stabilising", "Bounce fades if Nvidia falls on results", (-20,6,26), 'Speculative', 'Oversold rebound'),
+ ('E28.SI', "Frencken rose 6% from RSI 35.", "Q3 business update (Nov)", "No clear catalyst before results", (-14,5,16), 'Speculative', 'Oversold rebound'),
+ ('5DD.SI', "Micro-Mechanics rose 4.4%; RSI 39.", "Q1 FY27 results (Nov)", "Thin order book", (-12,4,14), 'Medium', 'Rebound'),
 ]
 P[('intraday','ai','US')] = [
- ('NVDA', "Fell 5.5% on 3x normal volume (RSI 19); briefly below $4T market value. Watch for a bounce or more lawsuit news.",
-  "Oversold bounce", "More China-chip headlines", (-4,0.5,4.5), 'Speculative', 'Headline risk'),
- ('CRWV', "Beat and raised after the close; late trading swung between gains and losses.", "Results reaction", "Capex and debt worries", (-9,1,10), 'Speculative', 'Earnings reaction'),
- ('NBIS', "Fell 5.3%; reports Q3 on Nov 12. Rose ~2% late with CoreWeave.", "CoreWeave read-across", "Pre-earnings selling", (-6,0.5,6), 'Speculative', 'Read-across'),
- ('TSM', "October sales +60% y/y; rose 2% while chips fell.", "Follow-through", "Rates at 5%", (-2.5,0.5,3), 'Medium', 'Relative strength'),
- ('AVGO', "Rose 3.9% against the selloff.", "Follow-through", "Profit-taking", (-3,0.3,3), 'Medium', 'Relative strength'),
+ ('NBIS', "Reports Q3 before the open on Nov 12 after rising ~18% on CoreWeave's results.", "Results", "Sell-the-news after the run-up", (-10,0.5,10), 'Speculative', 'Earnings reaction'),
+ ('AMAT', "Reports after the close on Nov 12; rose ~8% on Nov 11.", "Pre-results positioning", "China export rules", (-3,0.3,3), 'Medium', 'Pre-earnings'),
+ ('CRWV', "Day-two follow-through after a ~25% jump.", "Analyst upgrades", "Profit-taking", (-8,0,8), 'Speculative', 'Momentum check'),
+ ('NVDA', "Lagged the rally (+2.9% close) on a Baird downgrade.", "Catch-up bid", "CEO-probe headlines", (-3.5,0.5,4), 'Speculative', 'Headline risk'),
+ ('SNDK', "Jumped ~16% midday on memory strength.", "Momentum", "Profit-taking; 8% daily swings", (-7,0,7), 'Speculative', 'Momentum check'),
 ]
 P[('intraday','ai','SGX')] = [
- ('AWX.SI', "Jumped 10% on Nov 10 but faded from a 12% intraday high; Nvidia fell 5.5% overnight.", "Holds the gap", "Gives back gains", (-6,0,5), 'Speculative', 'Gap-fade watch'),
- ('558.SI', "Rose 4%.", "Next session", "US chip weakness", (-4,0,3.5), 'Speculative', 'Follow-through check'),
- ('E28.SI', "Rose 3.5% from oversold.", "Next session", "Follows US chip equipment", (-3.5,0.3,3.5), 'Medium', 'Follow-through check'),
- ('5DD.SI', "Rose 3.2%.", "Next session", "Thin trading", (-3,0.3,3), 'Medium', 'Range'),
- ('V03.SI', "Rose 1.7%; low volatility.", "Next session", "Small range", (-1.8,0.3,1.8), 'Medium', 'Range'),
+ ('558.SI', "Rose 9% on heavy volume.", "Next session", "Gives back gains", (-4,0,4), 'Speculative', 'Follow-through check'),
+ ('V03.SI', "Rose 5.2% to lead the STI after Q3.", "Next session", "Profit-taking", (-2,0.3,2.2), 'Medium', 'Follow-through check'),
+ ('E28.SI', "Rose 6%.", "Next session", "Follows US chip equipment", (-3.5,0.2,3.5), 'Speculative', 'Follow-through check'),
+ ('AWX.SI', "Rose 3%; US chips rallied overnight.", "Next session", "Gives back gains", (-5,0.5,5), 'Speculative', 'Gap watch'),
+ ('5DD.SI', "Rose 4.4%.", "Next session", "Thin trading", (-3,0.2,3), 'Medium', 'Range'),
 ]
 
 # ---------- Health ----------
 P[('long','hc','US')] = [
- ('LLY', "Obesity-drug leader: revenue +39%, at a new high (+33% this year). Little analyst upside left, so the base case is modest.",
+ ('LLY', "Obesity-drug leader: revenue +39%, at its high (+33% this year). Little analyst upside left, so the base case is modest.",
   "Orforglipron launch; Q4 results (Feb)", "Drug-price policy under the new Congress", (-16,8,25), 'High', 'Defensive growth'),
- ('ARGX', "argenx: revenue +52% from its immune-disease drug Vyvgart, 8% off its high, 18% analyst upside.",
-  "New indications in 2027", "Competition in myasthenia gravis", (-15,11,30), 'Medium', 'Growth leader'),
+ ('ARGX', "argenx: revenue +52% from its immune-disease drug Vyvgart, 8% off its high, 17% analyst upside.",
+  "New indications in 2027", "Competition in myasthenia gravis", (-15,10,28), 'Medium', 'Growth leader'),
  ('MDGL', "Madrigal's liver drug Rezdiffra is growing fast (revenue +50%); 28% off its high with 59% analyst upside.",
   "Script data; EU rollout", "Competition from GLP-1 drugs", (-22,20,45), 'Medium', 'Oversold growth'),
- ('INSM', "Insmed's lung drug launch drives revenue +268%; up 21% in a month but still 44% off its high, 63% analyst upside.",
+ ('INSM', "Insmed's lung drug launch drives revenue +268%; up 23% in a month but still 44% off its high, 63% analyst upside.",
   "Brensocatib launch numbers", "Expensive on near-term earnings", (-30,18,48), 'Medium', 'Launch story'),
- ('ALNY', "Alnylam is 68% off its high at about 14x forward earnings (RSI 15); analysts see 98% upside.",
+ ('ALNY', "Alnylam is 67% off its high at about 14x forward earnings (RSI 17); analysts see 91% upside.",
   "Amvuttra script data", "Trend still down", (-30,18,50), 'Speculative', 'Deep value'),
 ]
 P[('long','hc','SGX')] = [
  ('Q0F.SI', "IHH runs hospitals across Asia; analysts see 37% upside.", "Q3 results Nov 25", "Currency swings", (-12,12,25), 'Medium', 'Regional leader'),
  ('C2PU.SI', "Parkway Life REIT: steady hospital and nursing-home rents, 6% off its high.", "Dividend", "Rates near 5% in the US", (-8,7,15), 'High', 'Income'),
- ('AP4.SI', "Riverstone makes cleanroom and medical gloves at about 14x earnings with 42% analyst upside.", "Q3 results (Nov)", "Glove price competition", (-15,12,30), 'Medium', 'Value'),
+ ('AP4.SI', "Riverstone makes cleanroom and medical gloves at about 14x earnings with 38% analyst upside.", "Q3 results (Nov)", "Glove price competition", (-15,11,28), 'Medium', 'Value'),
  ('BSL.SI', "Raffles Medical: Singapore hospital group, 21% off its high and in a mild uptrend (RSI 65).", "Results (Feb)", "Shrinking revenue (-7%)", (-10,8,18), 'Medium', 'Recovery'),
  ('H02.SI', "Haw Par (Tiger Balm) trades near 10x earnings with a large cash and investment pile.", "Results (Feb)", "Revenue down 8%", (-12,6,16), 'Medium', 'Value'),
 ]
 P[('swing','hc','US')] = [
- ('INSM', "Up 14% in five days and rose 3% on a down day (RSI 77).", "Launch numbers", "Overbought", (-10,4,14), 'Medium', 'Momentum'),
- ('MDGL', "Up 9% in five days; 59% analyst upside.", "Script data", "Rotation back to tech", (-12,6,18), 'Medium', 'Rebound'),
- ('ALNY', "Deeply oversold (RSI 15) and 68% off its high.", "Amvuttra script data", "Trend still down", (-15,7,22), 'Speculative', 'Oversold rebound'),
- ('LLY', "At a new high again; leadership while growth stocks sell off.", "Orforglipron news", "Money rotating back into chips", (-8,3,10), 'High', 'Relative strength'),
- ('ARGX', "Up 8% in five days (RSI 67).", "Momentum", "Overbought", (-8,4,12), 'Medium', 'Trend'),
+ ('ALNY', "Deeply oversold (RSI 17), 67% off its high; rose 3.5% on Nov 11.", "Amvuttra script data", "Trend still down", (-15,7,22), 'Speculative', 'Oversold rebound'),
+ ('MDGL', "Up 8.5% in five days; 59% analyst upside.", "Script data", "Rotation back to tech", (-12,6,18), 'Medium', 'Rebound'),
+ ('INSM', "Up 23% in a month (RSI 76).", "Launch numbers", "Overbought", (-10,3,13), 'Medium', 'Momentum'),
+ ('LLY', "At its high; steady leader while growth stocks swing.", "Orforglipron news", "Money rotating back into chips", (-8,3,10), 'High', 'Relative strength'),
+ ('CYTK', "Cytokinetics' heart drug launch is starting (revenue from a near-zero base); 33% off its high, 87% analyst upside. Rose 4% on Nov 11.", "Launch numbers", "Launch slower than hoped", (-14,6,20), 'Speculative', 'Launch rebound'),
 ]
 P[('swing','hc','SGX')] = [
  ('C2PU.SI', "Parkway Life REIT: lowest-volatility name in the group.", "Dividend", "Rates", (-4,2,6), 'High', 'Range'),
  ('BSL.SI', "Raffles Medical is in a mild uptrend (RSI 65).", "Momentum", "Low volume", (-5,2.5,8), 'Medium', 'Trend'),
  ('Q0F.SI', "IHH ahead of Q3 results.", "Q3 results Nov 25", "Results miss", (-6,3,9), 'Medium', 'Pre-earnings'),
- ('AP4.SI', "Riverstone rose 1.4%; large analyst upside.", "Q3 results (Nov)", "Glove prices", (-8,3,10), 'Medium', 'Support'),
- ('QC7.SI', "Q&M Dental is very oversold (RSI 7).", "Bounce", "Small cap", (-8,3,10), 'Speculative', 'Oversold rebound'),
+ ('AP4.SI', "Riverstone rose 2.8%; large analyst upside.", "Q3 results (Nov)", "Glove prices", (-8,3,10), 'Medium', 'Support'),
+ ('QC7.SI', "Q&M Dental is very oversold (RSI 15).", "Bounce", "Small cap", (-8,3,10), 'Speculative', 'Oversold rebound'),
 ]
 P[('intraday','hc','US')] = [
- ('HIMS', "Fell 16.5% on almost 5x volume after cutting its 2026 EBITDA outlook, though revenue rose 49%.", "Oversold bounce (RSI 26)", "Analyst downgrades", (-8,0.5,8), 'Speculative', 'Post-earnings flush'),
- ('CRSP', "Fell 9.8% on 3x volume.", "Bounce", "More selling", (-6,0.3,6), 'Speculative', 'Bounce watch'),
- ('MRNA', "Fell 6.8% from near its high; still far above analyst targets.", "Dip buying", "Analysts see 38% downside to targets", (-6,0,6), 'Speculative', 'Extended'),
- ('INSM', "Rose 3% against the market (RSI 77).", "Momentum", "Profit-taking", (-3.5,0.3,3.5), 'Medium', 'Momentum check'),
- ('LLY', "New high on Nov 10.", "Momentum", "Rotation into tech", (-2.5,0.3,2.5), 'Medium', 'Relative strength'),
+ ('HIMS', "Bounced ~6% after a 24% weekly drop, but the FTC widened its lawsuit and KeyBanc calls 2027 a transition year.", "Oversold (RSI 30)", "Legal headlines; downgrades", (-7,0,7), 'Speculative', 'Post-earnings flush'),
+ ('ALNY', "Rose 3.5% from RSI 17.", "Bounce", "Trend down", (-4,0.3,4), 'Speculative', 'Bounce watch'),
+ ('MRNA', "Fell 2.3%; still far above analyst targets.", "Dip buying", "Analysts see 37% downside to targets", (-6,0,6), 'Speculative', 'Extended'),
+ ('CYTK', "Rose 4% with biotech.", "Momentum", "Profit-taking", (-3.5,0.3,3.5), 'Speculative', 'Momentum check'),
+ ('LLY', "Flat near its high.", "Defensive bid", "Rotation into tech", (-2.2,0.2,2.2), 'Medium', 'Range'),
 ]
 P[('intraday','hc','SGX')] = [
  ('C2PU.SI', "Steady REIT.", "Next session", "Small range", (-1,0.2,1), 'Medium', 'Range'),
- ('BSL.SI', "Flat; mild uptrend.", "Next session", "Small range", (-1.5,0.3,1.5), 'Medium', 'Relative strength'),
- ('H02.SI', "Steady.", "Next session", "Small range", (-1.5,0.3,1.5), 'Medium', 'Range'),
- ('Q0F.SI', "Rose 0.8%.", "Next session", "Malaysia market swings", (-2,0.2,2), 'Medium', 'Range'),
- ('AP4.SI', "Rose 1.4%.", "Next session", "Thin trading", (-2,0.2,2), 'Medium', 'Range'),
+ ('BSL.SI', "Rose 1.2%; mild uptrend.", "Next session", "Small range", (-1.5,0.3,1.5), 'Medium', 'Relative strength'),
+ ('AP4.SI', "Rose 2.8%.", "Next session", "Thin trading", (-2,0.2,2), 'Medium', 'Follow-through check'),
+ ('H02.SI', "Rose 0.8%.", "Next session", "Small range", (-1.5,0.3,1.5), 'Medium', 'Range'),
+ ('Q0F.SI', "Rose 0.4%.", "Next session", "Malaysia market swings", (-2,0.2,2), 'Medium', 'Range'),
 ]
 
 # ---------- Finance ----------
 P[('long','fin','US')] = [
  ('JPM', "Best-run US bank, 6% off its high at about 13x forward earnings. Higher rates support interest income.", "Q4 results Jan 14", "Credit cycle", (-15,8,22), 'High', 'Core holding'),
  ('V', "Visa: steady growth (+13%), near its high; little AI exposure.", "Holiday spending", "Regulation of card fees", (-12,6,18), 'High', 'Defensive growth'),
- ('GS', "Trading and deal-making boom, about 12x forward earnings, 21% off its high. A record Anthropic IPO (up to ~$64B) would be a big fee win.",
-  "Anthropic IPO (Goldman co-leads)", "Market volatility hits deals", (-20,10,28), 'Medium', 'Cyclical value'),
- ('SE', "Sea: Q3 revenue +43% to $8.6B beat, but EPS missed on higher loan-loss provisions; new $1B buyback. About 16x forward earnings, 50% off its high.",
-  "Q4 results (Mar)", "Rising credit costs at Monee; competition", (-30,22,55), 'Medium', 'Oversold growth'),
- ('NU', "Nubank: revenue +52% at about 11x forward earnings, 36% off its high.", "Q3 results Nov 12", "Brazil credit and currency", (-30,22,55), 'Medium', 'Growth at a discount'),
+ ('GS', "Trading and deal-making boom, about 12.5x forward earnings, 19% off its high. Co-leads Anthropic's IPO, whose roadshow launched this week.",
+  "Anthropic IPO (pricing week of Nov 16)", "Market volatility hits deals", (-20,10,28), 'Medium', 'Cyclical value'),
+ ('NU', "Nubank: revenue +52% at about 11x forward earnings, 35% off its high.", "Q3 results Nov 12", "Brazil credit and currency", (-30,20,52), 'Medium', 'Growth at a discount'),
+ ('SE', "Sea: Q3 revenue +43% beat but EPS missed on loan-loss provisions; $1B buyback. About 15x forward earnings, 49% off its high.",
+  "Q4 results (Mar)", "Rising credit costs at Monee; competition", (-30,20,52), 'Medium', 'Oversold growth'),
 ]
 P[('long','fin','SGX')] = [
  ('D05.SI', "DBS kept its 81-cent quarterly dividend and says interest income has bottomed; 10% off its high.",
   "Q4 results (Feb)", "Margins if rates fall; stronger SGD", (-10,8,16), 'High', 'Income leader'),
- ('O39.SI', "OCBC was the only local bank to beat in Q3 and raised loan-growth guidance; rose 3.3% today.",
+ ('O39.SI', "OCBC was the only local bank to beat in Q3 and raised loan-growth guidance.",
   "Q4 results (Feb)", "Margin fell 18 bp to 1.66%", (-10,7,15), 'Medium', 'Income'),
- ('U11.SI', "UOB missed Q3 and cut its margin guidance; RSI 18, 17% off its high.", "Recovery in fees", "More credit provisions", (-12,8,18), 'Medium', 'Oversold income'),
- ('AIY.SI', "iFAST: fintech platform, revenue +23%, 27% off its high with 43% analyst upside.", "HK pension business", "Market-driven volumes", (-18,18,38), 'Medium', 'Growth'),
+ ('U11.SI', "UOB missed Q3 and cut its margin guidance; RSI 17, 16% off its high.", "Recovery in fees", "More credit provisions", (-12,8,18), 'Medium', 'Oversold income'),
+ ('AIY.SI', "iFAST: fintech platform, revenue +23%, 27% off its high with 42% analyst upside.", "HK pension business", "Market-driven volumes", (-18,17,36), 'Medium', 'Growth'),
  ('S68.SI', "SGX benefits from high trading volumes; from Jan 2027 its RegCo takes over IPO prospectus reviews.", "Monthly volume data", "Already priced (25x earnings)", (-12,7,18), 'Medium', 'Volatility winner'),
 ]
 P[('swing','fin','US')] = [
- ('NU', "Oversold (RSI 25) into Q3 results Nov 12.", "Results", "Brazil credit", (-15,6,20), 'Medium', 'Pre-earnings'),
- ('SE', "Fell only 1.5% after a revenue beat and EPS miss; new $1B buyback.", "Buyback; analyst updates", "Credit costs", (-12,5,16), 'Medium', 'Post-earnings'),
- ('GS', "Anthropic set an IPO range of $70-78; pricing is expected next week.", "Deal fees", "Volatility", (-8,4,12), 'Medium', 'Deal pipeline'),
- ('HOOD', "Down 26% in a month (RSI 25); retail access to the Anthropic IPO runs partly through Robinhood.", "Anthropic IPO demand; October data", "Crypto weakness; higher rates", (-18,6,22), 'Speculative', 'Oversold rebound'),
- ('KKR', "Rose 2.8% to an RSI of 68; up 10% in a month.", "Momentum", "Private-credit worries", (-8,3,10), 'Medium', 'Trend'),
+ ('NU', "Oversold (RSI 27) into Q3 results on Nov 12.", "Results", "Brazil credit; MercadoLibre's margin miss", (-15,6,20), 'Medium', 'Pre-earnings'),
+ ('HOOD', "Rose 5% from oversold; retail access to the Anthropic IPO runs partly through Robinhood.", "Anthropic IPO demand", "Crypto weakness; higher rates", (-16,6,22), 'Speculative', 'Oversold rebound'),
+ ('GS', "Anthropic roadshow is under way ($70-78); pricing expected next week.", "Deal fees", "Volatility", (-8,4,12), 'Medium', 'Deal pipeline'),
+ ('IBKR', "Rose ~8% midday with the market rebound; 15% off its high, about 25x forward earnings.", "Monthly brokerage metrics", "Rates and crypto swings", (-10,4,13), 'Medium', 'Relative strength'),
+ ('SE', "Holding after a revenue beat and EPS miss; $1B buyback.", "Buyback; analyst updates", "Credit costs", (-12,5,16), 'Medium', 'Post-earnings'),
 ]
 P[('swing','fin','SGX')] = [
- ('D05.SI', "DBS is oversold (RSI 23) and rose 1.3%.", "Dividend support", "Margin worries", (-4,3,7), 'High', 'Oversold income'),
- ('U11.SI', "UOB RSI 18 after its Q3 miss.", "Rebound", "Further downgrades", (-5,3,8), 'Medium', 'Oversold rebound'),
- ('O39.SI', "OCBC rose 3.3% as banks bounced.", "Post-results recovery", "Margin squeeze", (-4,2,6), 'Medium', 'Rebound'),
- ('AIY.SI', "iFAST is holding up (RSI 51).", "Momentum", "Market-driven", (-8,3,10), 'Medium', 'Range'),
+ ('D05.SI', "DBS is oversold (RSI 25); rose 1% on Nov 11.", "Dividend support", "Margin worries", (-4,3,7), 'High', 'Oversold income'),
+ ('U11.SI', "UOB RSI 17 after its Q3 miss.", "Rebound", "Further downgrades", (-5,3,8), 'Medium', 'Oversold rebound'),
+ ('O39.SI', "OCBC rose 1% as banks firmed.", "Post-results recovery", "Margin squeeze", (-4,2,6), 'Medium', 'Rebound'),
+ ('AIY.SI', "iFAST is holding up (RSI 48).", "Momentum", "Market-driven", (-8,3,10), 'Medium', 'Range'),
  ('S68.SI', "SGX benefits when markets are volatile.", "Volume data", "Valuation", (-5,2,7), 'Medium', 'Volatility winner'),
 ]
 P[('intraday','fin','US')] = [
- ('SE', "Fell 1.5% after Q3 (revenue beat, EPS miss).", "Buyback support", "Credit-cost worries", (-5,0.5,5), 'Medium', 'Earnings reaction'),
- ('UPST', "Fell 8.3% as yields rose to 5%.", "Bounce", "Rate-sensitive lender", (-6,0,6), 'Speculative', 'Rate sensitivity'),
- ('HOOD', "Fell 2.4% (RSI 25).", "Anthropic IPO interest", "Crypto weakness", (-4,0.3,4), 'Speculative', 'Bounce watch'),
- ('COIN', "Fell 2.9% (RSI 22).", "Crypto bounce", "More crypto selling", (-5,0,5), 'Speculative', 'Crypto beta'),
- ('JPM', "Flat; banks held up as yields rose.", "Higher rates", "Small range", (-1.5,0.2,1.5), 'Medium', 'Range'),
+ ('NU', "Reports Q3 on Nov 12 (RSI 27).", "Results", "Brazil credit", (-8,0.5,8), 'Speculative', 'Earnings reaction'),
+ ('IBKR', "Rose ~8% midday.", "Momentum", "Profit-taking", (-3,0.2,3), 'Medium', 'Momentum check'),
+ ('HOOD', "Rose 5%.", "Anthropic IPO interest", "Crypto weakness", (-4,0.3,4), 'Speculative', 'Follow-through check'),
+ ('COIN', "Rose 4.5% as bitcoin firmed near $74K.", "Crypto bounce", "More crypto selling", (-5,0,5), 'Speculative', 'Crypto beta'),
+ ('JPM', "Little changed; banks steady.", "Higher rates", "Small range", (-1.5,0.2,1.5), 'Medium', 'Range'),
 ]
 P[('intraday','fin','SGX')] = [
- ('D05.SI', "Rose 1.3% from RSI 23.", "Next session", "Market-wide risk-off", (-1.2,0.3,1.4), 'High', 'Follow-through check'),
- ('U11.SI', "Rose 1%; still oversold.", "Next session", "Trend down", (-1.5,0.3,1.6), 'Medium', 'Bounce watch'),
- ('O39.SI', "Rose 3.3%.", "Next session", "Profit-taking", (-1.5,0,1.2), 'Medium', 'Follow-through check'),
- ('S68.SI', "Rose 0.5%.", "Next session", "Small range", (-1.5,0.2,1.5), 'Medium', 'Range'),
- ('AIY.SI', "Rose 1.3%.", "Next session", "Risk-off", (-2,0.3,2), 'Medium', 'Range'),
+ ('D05.SI', "Rose 1% from RSI 25.", "Next session", "Market-wide risk-off", (-1.2,0.3,1.4), 'High', 'Follow-through check'),
+ ('U11.SI', "Rose 0.9%; still oversold.", "Next session", "Trend down", (-1.5,0.3,1.6), 'Medium', 'Bounce watch'),
+ ('O39.SI', "Rose 1%.", "Next session", "Small range", (-1.3,0.2,1.3), 'Medium', 'Range'),
+ ('S68.SI', "Rose 0.4%.", "Next session", "Small range", (-1.5,0.2,1.5), 'Medium', 'Range'),
+ ('AIY.SI', "Rose 0.8%.", "Next session", "Risk-off", (-2,0.3,2), 'Medium', 'Range'),
 ]
 
 # IPO tab (6-month view), all markets
 P[('ipo','all','US')] = [
- ('SPCX', "SpaceX listed in June at $135 and trades about 6% above that, 32% under its high. Analysts see large upside.",
+ ('SPCX', "SpaceX listed in June at $135 and trades about 7% above that, 32% under its high. Analysts see large upside.",
   "xAI/GPU news; NASA lunar awards; lock-up expiries", "Valuation, Musk headlines and data-centre policy", (-35,12,45), 'Medium', 'Mega-cap IPO'),
- ('CHYM', "Chime (IPO $27) trades about 20% above its IPO price, near its high, up 15% in five days.",
+ ('CHYM', "Chime (IPO $27) trades about 22% above its IPO price, near its high, up 11% in five days.",
   "Member growth", "Fintech credit cycle", (-15,10,28), 'Medium', 'Post-IPO uptrend'),
- ('KLAR', "Klarna (IPO $40) is 67% below its IPO price at about 17x forward earnings; revenue +27%.",
+ ('ACCV', "Accelevation (IPO $18) makes electrical gear for data centres: revenue +80% at about 12x forward earnings. Rose ~16% midday with AI infrastructure, still 31% below its IPO price.",
+  "First results as a public company Nov 12", "Data-centre policy risk; 9% daily swings", (-40,12,55), 'Speculative', 'Post-IPO value'),
+ ('KLAR', "Klarna (IPO $40) is 66% below its IPO price at about 16x forward earnings; revenue +27%.",
   "Q3 results Nov 17", "Buy-now-pay-later credit losses", (-22,15,40), 'Speculative', 'Deep value'),
- ('ACCV', "Accelevation (IPO $18) makes electrical gear for data centres: revenue +80% at about 10x forward earnings. Fell 12% today to 41% below its IPO price.",
-  "First results as a public company Nov 12", "Data-centre policy risk; 9% daily swings", (-40,10,50), 'Speculative', 'Post-IPO value'),
- ('FIG', "Figma: revenue +43% with AI products, but 44% below its IPO price after a weak reaction to results.",
+ ('FIG', "Figma: revenue +43% with AI products, but 42% below its IPO price after a weak reaction to results (RSI 30).",
   "AI product monetisation", "Software multiples falling; Anthropic's new office tools", (-30,8,38), 'Speculative', 'Post-earnings dip'),
 ]
 
 # ---------- Power & grid (data-center power) ----------
 P[('long','pwr','US')] = [
- ('GEV', "GE Vernova: gas turbines and grid gear sold out for years, revenue +27%. 32% off its high; fell 3.9% today.", "Q4 results Jan 27", "Data-centre policy; valuation (30x)", (-25,15,40), 'High', 'Quality at a discount'),
- ('CEG', "Constellation beat Q3 and raised 2026 guidance to $12.50-12.80; still 29% off its high.", "Buyback update; new long-term power deals", "Data-centre politics; PJM rules", (-22,16,38), 'High', 'Beat and raise'),
- ('ETN', "Eaton: electrical gear for data centres and utilities, 23% off its high at about 21x earnings.", "Q4 results Feb 2", "Data-centre orders slowing", (-20,13,33), 'Medium', 'Quality at a discount'),
- ('PWR', "Quanta builds the grid: revenue +57%, 26% off its high.", "Utility capex plans", "Data-centre policy", (-25,13,36), 'Medium', 'Grid builder'),
- ('VRT', "Vertiv: data-centre cooling and power, revenue +61% at about 19x forward earnings, 48% off its high. CoreWeave raised capex to $37-39B.", "Order backlog updates", "Most exposed to a data-centre slowdown", (-35,20,55), 'Medium', 'Oversold growth'),
+ ('GEV', "GE Vernova: gas turbines and grid gear sold out for years, revenue +27%. 30% off its high with 44% analyst upside.", "Q4 results Jan 27", "Data-centre policy; valuation (32x)", (-25,15,40), 'High', 'Quality at a discount'),
+ ('CEG', "Constellation beat Q3 and raised 2026 guidance to $12.50-12.80; still 27% off its high.", "Buyback update; new long-term power deals", "Data-centre politics; PJM rules", (-22,15,36), 'High', 'Beat and raise'),
+ ('ETN', "Eaton: electrical gear for data centres and utilities, 20% off its high at about 22x earnings.", "Q4 results Feb 2", "Data-centre orders slowing", (-20,13,33), 'Medium', 'Quality at a discount'),
+ ('VRT', "Vertiv: data-centre cooling and power, revenue +61% at about 21x forward earnings, 44% off its high. CoreWeave's results eased spending fears.", "Order backlog updates", "Most exposed to a data-centre slowdown", (-35,18,52), 'Medium', 'Oversold growth'),
+ ('PWR', "Quanta builds the grid: revenue +57%, 21% off its high.", "Utility capex plans", "Data-centre policy", (-25,12,34), 'Medium', 'Grid builder'),
 ]
 P[('long','pwr','SGX')] = [
- ('BN4.SI', "Keppel: power, data centres and asset management, about 16x earnings with 30% analyst upside; rose 3.4% today.", "Asset sales", "Execution", (-12,12,25), 'Medium', 'Value'),
+ ('BN4.SI', "Keppel: power, data centres and asset management, about 16x earnings with 29% analyst upside.", "Asset sales", "Execution", (-12,12,25), 'Medium', 'Value'),
  ('U96.SI', "Sembcorp: power and renewables at about 9x earnings.", "New contracts", "Power prices", (-12,7,18), 'Medium', 'Value'),
  ('DCRU.SI', "Digital Core REIT: US data-centre REIT, about 10x earnings with 52% analyst upside.", "Leasing news", "Tenant concentration; US rates at 5%", (-12,12,28), 'Medium', 'Deep value'),
- ('AJBU.SI', "Keppel DC REIT: data-centre rents, 10% off its high.", "Dividend", "Rates", (-10,7,17), 'Medium', 'Income'),
- ('544.SI', "CSE Global: electrification and data-centre work, about 10x earnings, 52% off its high; rose 4% today.", "New orders", "Small and volatile", (-30,18,50), 'Speculative', 'Recovery'),
+ ('AJBU.SI', "Keppel DC REIT: data-centre rents, 11% off its high.", "Dividend", "Rates", (-10,7,17), 'Medium', 'Income'),
+ ('544.SI', "CSE Global: electrification and data-centre work, about 11x earnings, 48% off its high; rose 8% on Nov 11.", "New orders", "Small and volatile", (-30,18,50), 'Speculative', 'Recovery'),
 ]
 P[('swing','pwr','US')] = [
- ('CEG', "Beat-and-raise last week; FY consensus still sits below the new guidance. Fell 3% today with power names.", "Analyst target updates", "Data-centre politics; higher yields", (-12,6,18), 'Medium', 'Post-earnings drift'),
- ('NRG', "Strong Q3 and a $4B asset sale; about 10x earnings with 71% analyst upside.", "Analyst updates", "Texas data-centre proposal", (-15,7,22), 'Medium', 'Post-earnings drift'),
- ('VST', "Raised its 2026 outlook on Nov 6; 30% off its high (RSI 36).", "Analyst updates", "Texas data-centre proposal", (-14,6,20), 'Medium', 'Post-earnings drift'),
- ('GEV', "Down 13% in five days on 1.5x volume (RSI 38).", "Rebound", "Rates; data-centre politics", (-12,5,16), 'Medium', 'Oversold quality'),
- ('BE', "Bloom: down 13% in five days (RSI 37) despite new Google fuel-cell work.", "New orders", "7% daily swings", (-20,7,26), 'Speculative', 'News vs price'),
+ ('TLN', "Talen signed a seven-year 750 MW capacity deal worth ~$100M a year; up 17% in five days, about 12.5x forward earnings.", "Analyst target updates", "Overbought after the jump", (-12,6,18), 'Medium', 'New-contract momentum'),
+ ('CEG', "Beat-and-raise last week; up 12% in five days.", "Analyst target updates", "Data-centre politics; higher yields", (-12,6,18), 'Medium', 'Post-earnings drift'),
+ ('NRG', "Strong Q3 and a $4B asset sale; about 10x earnings with 66% analyst upside. Up 20% in five days.", "Analyst updates", "Texas data-centre proposal", (-15,6,20), 'Medium', 'Post-earnings drift'),
+ ('VRT', "Rose ~9% midday as CoreWeave's results revived data-centre spending hopes.", "Order updates", "Rates; 7% daily swings", (-15,6,20), 'Medium', 'Rebound'),
+ ('VST', "Raised its 2026 outlook on Nov 6; up 13% in five days, 49% analyst upside.", "Analyst updates", "Texas data-centre proposal", (-14,6,20), 'Medium', 'Post-earnings drift'),
 ]
 P[('swing','pwr','SGX')] = [
- ('BN4.SI', "Keppel rose 3.4% from RSI 30.", "Asset-sale news", "Execution", (-5,3,8), 'Medium', 'Rebound'),
- ('U96.SI', "Sembcorp rose 1%; RSI 35.", "Contracts", "Power prices", (-5,2,7), 'Medium', 'Range'),
- ('544.SI', "CSE Global rose 4% but faded from a 5% intraday gain.", "Bounce", "Small cap", (-18,5,20), 'Speculative', 'Oversold rebound'),
- ('DCRU.SI', "Digital Core REIT fell 2.2% (RSI 56).", "Support", "US data-centre worries", (-6,2,8), 'Medium', 'Range'),
- ('AJBU.SI', "Keppel DC REIT is in an uptrend (RSI 77).", "Momentum", "Overbought", (-5,1,6), 'Medium', 'Trend'),
+ ('544.SI', "CSE Global rose 8% on heavy volume (RSI 47).", "New orders", "Small cap", (-15,5,18), 'Speculative', 'Rebound'),
+ ('BN4.SI', "Keppel rose 1.1% from RSI 42.", "Asset-sale news", "Execution", (-5,3,8), 'Medium', 'Rebound'),
+ ('U96.SI', "Sembcorp rose 1%; RSI 36.", "Contracts", "Power prices", (-5,2,7), 'Medium', 'Range'),
+ ('DCRU.SI', "Digital Core REIT flat (RSI 63).", "Support", "US data-centre worries", (-6,2,8), 'Medium', 'Range'),
+ ('AJBU.SI', "Keppel DC REIT eased 1.4% from overbought (RSI 69).", "Momentum", "Overbought", (-5,1,6), 'Medium', 'Trend'),
 ]
 P[('intraday','pwr','US')] = [
- ('OKLO', "Fell 6.7%.", "Bounce", "Cash burn; rate-sensitive", (-7,0,7), 'Speculative', 'Momentum check'),
- ('GEV', "Fell 3.9% on 1.5x volume.", "Bounce", "More selling", (-3.5,0.3,3.5), 'Medium', 'Bounce watch'),
- ('BE', "Fell 4.4%.", "Bounce", "7% daily swings", (-6,0,6), 'Speculative', 'Momentum check'),
- ('CEG', "Fell 3%.", "Bounce", "Higher yields", (-3,0.3,3), 'Medium', 'Bounce watch'),
- ('NEE', "Dipped 0.7% as yields rose (RSI 74).", "Defensive bid", "Rates at 5%", (-1.8,0,1.8), 'Medium', 'Range'),
+ ('BE', "Rose ~16% as CoreWeave's results lifted AI power names.", "Momentum", "Profit-taking; 8% daily swings", (-7,0,7), 'Speculative', 'Momentum check'),
+ ('VRT', "Rose ~9% midday.", "Follow-through", "Profit-taking", (-4,0.3,4), 'Medium', 'Follow-through check'),
+ ('TLN', "Rose ~6% on a new 750 MW capacity deal.", "Analyst updates", "Profit-taking", (-3.5,0.3,3.5), 'Medium', 'News follow-through'),
+ ('OKLO', "Rose 6.5%; up 21% in five days.", "Momentum", "Cash burn; rate-sensitive", (-7,0,7), 'Speculative', 'Momentum check'),
+ ('GEV', "Rose 2.8%; lagged other power names.", "Catch-up", "Higher yields", (-3,0.3,3), 'Medium', 'Range'),
 ]
 P[('intraday','pwr','SGX')] = [
- ('BN4.SI', "Rose 3.4%.", "Next session", "Profit-taking", (-1.8,0.2,1.8), 'Medium', 'Follow-through check'),
+ ('544.SI', "Rose 8%.", "Next session", "Gives back gains", (-4,0,4), 'Speculative', 'Follow-through check'),
+ ('BN4.SI', "Rose 1.1%.", "Next session", "Small range", (-1.6,0.2,1.6), 'Medium', 'Range'),
  ('U96.SI', "Rose 1%.", "Next session", "Small range", (-1.5,0.2,1.5), 'Medium', 'Range'),
- ('544.SI', "Rose 4%.", "Next session", "Gives back gains", (-5,0,5), 'Speculative', 'Follow-through check'),
- ('AJBU.SI', "Rose 0.9%.", "Next session", "Small range", (-1.2,0.2,1.2), 'Medium', 'Range'),
- ('DCRU.SI', "Fell 2.2%.", "Next session", "Small range", (-1.5,0.3,1.5), 'Medium', 'Bounce watch'),
+ ('AJBU.SI', "Fell 1.4%.", "Next session", "Small range", (-1.2,0.2,1.2), 'Medium', 'Bounce watch'),
+ ('DCRU.SI', "Flat.", "Next session", "Small range", (-1.5,0.3,1.5), 'Medium', 'Range'),
 ]
 
 # ---------- Defence & industrials ----------
 P[('long','def','US')] = [
- ('GE', "GE Aerospace: jet-engine services boom, revenue +16%, 11% off its high.", "Q4 results Jan 21", "Valuation (36x)", (-15,11,28), 'High', 'Quality'),
- ('RTX', "RTX: missiles and engines, revenue +11%, steady; rose 2% today.", "Q4 results Jan 26", "Engine issues", (-12,10,24), 'High', 'Core defence'),
+ ('GE', "GE Aerospace: jet-engine services boom, revenue +16%, 10% off its high.", "Q4 results Jan 21", "Valuation (37x)", (-15,10,26), 'High', 'Quality'),
+ ('RTX', "RTX: missiles and engines, revenue +11%, steady.", "Q4 results Jan 26", "Engine issues", (-12,10,24), 'High', 'Core defence'),
  ('LHX', "L3Harris: space and missile sensors, 27% off its high, 22% analyst upside.", "Golden Dome contracts", "Budget fights with a split government", (-15,12,30), 'Medium', 'Value'),
- ('HWM', "Howmet: jet-engine parts, revenue +29%, 25% off its high.", "Aerospace build rates", "Valuation (33x)", (-20,15,36), 'Medium', 'Growth at a discount'),
+ ('HWM', "Howmet: jet-engine parts, revenue +29%, 23% off its high.", "Aerospace build rates", "Valuation (34x)", (-20,14,34), 'Medium', 'Growth at a discount'),
  ('NOC', "Northrop: B-21 and missile defence, about 18x earnings, 29% off its high; NASA lunar award.", "Golden Dome contracts", "Budget fights", (-15,11,28), 'Medium', 'Value'),
 ]
 P[('long','def','SGX')] = [
- ('S63.SI', "ST Engineering: defence and aerospace, revenue +11%; oversold (RSI 22) and 17% off its high.", "Contract wins", "Valuation (25x)", (-10,12,24), 'High', 'Quality'),
- ('BS6.SI', "Yangzijiang Shipbuilding: about 8x earnings, revenue +36%; top STI gainer today (+5.5%).", "New ship orders", "US port fees on Chinese ships", (-18,12,30), 'Medium', 'Value'),
+ ('S63.SI', "ST Engineering: defence and aerospace, revenue +11%; oversold (RSI 33) and 15% off its high.", "Contract wins", "Valuation (25x)", (-10,12,24), 'High', 'Quality'),
+ ('BS6.SI', "Yangzijiang Shipbuilding: about 8x earnings, revenue +36%, 22% analyst upside.", "New ship orders", "US port fees on Chinese ships", (-18,12,30), 'Medium', 'Value'),
  ('S59.SI', "SIA Engineering: aircraft maintenance, 24% off its high, 30% analyst upside.", "Air travel", "Revenue falling (-11%)", (-10,11,24), 'Medium', 'Recovery'),
  ('C52.SI', "ComfortDelGro: steady transport earnings at about 14x.", "Overseas contracts", "Slow growth", (-8,8,16), 'Medium', 'Steady'),
- ('H22.SI', "Hong Leong Asia: engines and building materials at about 8x earnings, 46% off its high.", "Results (Feb)", "China demand", (-25,22,50), 'Speculative', 'Deep value'),
+ ('H22.SI', "Hong Leong Asia: engines and building materials at about 9x earnings, 44% off its high.", "Results (Feb)", "China demand", (-25,22,50), 'Speculative', 'Deep value'),
 ]
 P[('swing','def','US')] = [
- ('CAT', "Caterpillar is 45% off its high (RSI 26) and fell 2.4% today.", "Rebound", "Data-centre generator orders slowing", (-12,6,18), 'Medium', 'Oversold rebound'),
- ('AXON', "Down 27% in five days after a Q3 miss (RSI 24); 79% analyst upside.", "Analyst updates", "More downgrades", (-18,6,22), 'Speculative', 'Post-earnings dip'),
- ('LMT', "Rose 2.5% as money moved to defensives; NASA lunar award.", "Contracts", "Budget fights", (-7,3,9), 'Medium', 'Defensive bid'),
- ('BA', "Boeing 31% off its high (RSI 31); production recovering.", "Monthly deliveries", "Quality issues; staff cuts", (-10,5,15), 'Medium', 'Recovery'),
- ('AVAV', "AeroVironment 69% off its high; RSI 54.", "Drone and counter-drone orders", "Volatile; results Dec 2", (-18,6,22), 'Speculative', 'Rebound'),
+ ('CAT', "Caterpillar is 43% off its high (RSI 34); Evercore ISI still sees ~40% upside. Rose 3.5% midday.", "Rebound", "Data-centre generator orders slowing", (-12,6,18), 'Medium', 'Oversold rebound'),
+ ('AXON', "Down 25% in five days after a Q3 miss (RSI 25); 71% analyst upside. Rose 4.5% midday.", "Analyst updates", "More downgrades", (-18,6,22), 'Speculative', 'Post-earnings dip'),
+ ('LMT', "Up 20% in a month; NASA lunar award.", "Contracts", "Budget fights", (-7,3,9), 'Medium', 'Trend'),
+ ('BA', "Boeing 31% off its high (RSI 35); production recovering.", "Monthly deliveries", "Quality issues; staff cuts", (-10,5,15), 'Medium', 'Recovery'),
+ ('AVAV', "AeroVironment 68% off its high; up 11% in five days.", "Drone and counter-drone orders", "Volatile; results Dec 2", (-18,6,22), 'Speculative', 'Rebound'),
 ]
 P[('swing','def','SGX')] = [
- ('S63.SI', "ST Engineering rose 2.8% from extreme oversold.", "Bounce", "Low volatility", (-4,3,8), 'High', 'Oversold rebound'),
- ('BS6.SI', "Yangzijiang rose 5.5%.", "Orders", "Trade fees", (-8,4,12), 'Medium', 'Rebound'),
- ('H22.SI', "Hong Leong Asia rose 3% from RSI 24.", "Bounce", "China demand", (-10,4,12), 'Speculative', 'Oversold rebound'),
- ('S59.SI', "SIA Engineering steady.", "Air travel", "Slow growth", (-6,2,7), 'Medium', 'Range'),
- ('C52.SI', "ComfortDelGro steady (RSI 63).", "Support", "Slow growth", (-4,1.5,5), 'Medium', 'Range'),
+ ('S63.SI', "ST Engineering rose 2.2% from oversold.", "Bounce", "Low volatility", (-4,3,8), 'High', 'Oversold rebound'),
+ ('H22.SI', "Hong Leong Asia rose 3.4% from RSI 26.", "Bounce", "China demand", (-10,4,12), 'Speculative', 'Oversold rebound'),
+ ('BS6.SI', "Yangzijiang rose 0.9% (RSI 37).", "Orders", "Trade fees", (-8,4,12), 'Medium', 'Support'),
+ ('S59.SI', "SIA Engineering oversold (RSI 31).", "Air travel", "Slow growth", (-6,2,7), 'Medium', 'Oversold rebound'),
+ ('C52.SI', "ComfortDelGro steady (RSI 56).", "Support", "Slow growth", (-4,1.5,5), 'Medium', 'Range'),
 ]
 P[('intraday','def','US')] = [
- ('HII', "Rose 3.1% (RSI 67).", "Defence bid", "Profit-taking", (-2.5,0.3,2.5), 'Medium', 'Momentum check'),
- ('LMT', "Rose 2.5%.", "Defence bid", "Rotation into tech", (-2.5,0.3,2.5), 'Medium', 'Range'),
- ('CAT', "Fell 2.4% (RSI 26).", "Bounce", "More selling", (-3,0.3,3), 'Medium', 'Bounce watch'),
- ('AXON', "Flat at RSI 24.", "Bounce", "More selling", (-5,0.5,5), 'Speculative', 'Bounce watch'),
- ('KTOS', "Fell 2.6%.", "Drone contracts", "Volatile", (-5,0,5), 'Speculative', 'Range'),
+ ('AXON', "Rose 4.5% from a 52-week low.", "Bounce", "More selling", (-5,0.5,5), 'Speculative', 'Bounce watch'),
+ ('CAT', "Rose 3.5% (RSI 34).", "Bounce", "Rotation back to tech", (-3,0.3,3), 'Medium', 'Follow-through check'),
+ ('HWM', "Rose 2.8% (RSI 65).", "Momentum", "Profit-taking", (-3,0.2,3), 'Medium', 'Momentum check'),
+ ('KTOS', "Rose 1.4%.", "Drone contracts", "Volatile", (-4.5,0,4.5), 'Speculative', 'Range'),
+ ('LMT', "Rose 0.7%.", "Defence bid", "Rotation into tech", (-2.2,0.2,2.2), 'Medium', 'Range'),
 ]
 P[('intraday','def','SGX')] = [
- ('BS6.SI', "Rose 5.5% to lead the STI.", "Next session", "Profit-taking", (-2.5,0.2,2.5), 'Medium', 'Follow-through check'),
- ('S63.SI', "Rose 2.8%.", "Next session", "Small range", (-1.5,0.3,1.8), 'Medium', 'Follow-through check'),
- ('H22.SI', "Rose 3%.", "Next session", "Thin trading", (-3,0.3,3), 'Speculative', 'Bounce watch'),
- ('C52.SI', "Flat.", "Next session", "Small range", (-1,0.2,1), 'Medium', 'Range'),
+ ('H22.SI', "Rose 3.4%.", "Next session", "Thin trading", (-3,0.3,3), 'Speculative', 'Bounce watch'),
+ ('S63.SI', "Rose 2.2%.", "Next session", "Small range", (-1.5,0.3,1.8), 'Medium', 'Follow-through check'),
+ ('BS6.SI', "Rose 0.9%.", "Next session", "Trade fees", (-2.5,0.2,2.5), 'Medium', 'Range'),
+ ('C52.SI', "Fell 0.8%.", "Next session", "Small range", (-1,0.2,1), 'Medium', 'Range'),
  ('S59.SI', "Flat.", "Next session", "Small range", (-1.5,0.2,1.5), 'Medium', 'Range'),
 ]
 
@@ -270,55 +270,55 @@ P[('intraday','def','SGX')] = [
 P[('long','nrg','US')] = [
  ('CVX', "Chevron: revenue +35%, about 13x earnings, 10% off its high.", "Hess integration; buybacks", "Oil drops further if an Iran deal is reached", (-16,8,24), 'High', 'Core energy'),
  ('XOM', "Exxon: steady cash flow, about 13x earnings.", "Buybacks", "Oil price drop", (-15,7,21), 'High', 'Core energy'),
- ('FANG', "Diamondback: low-cost Permian producer at about 8x earnings, 34% analyst upside.", "Buybacks", "Oil price drop (WTI ~$85)", (-22,13,33), 'Medium', 'Value'),
- ('LNG', "Cheniere: US gas exports on long contracts; less tied to oil. Rose 3% today.", "New export capacity", "Gas price swings", (-15,9,26), 'Medium', 'Steady'),
+ ('FANG', "Diamondback: low-cost Permian producer at about 8x earnings, 33% analyst upside.", "Buybacks", "Oil price drop (WTI ~$86)", (-22,13,33), 'Medium', 'Value'),
+ ('LNG', "Cheniere: US gas exports on long contracts; less tied to oil. Up 5% in a month.", "New export capacity", "Gas price swings", (-15,9,26), 'Medium', 'Steady'),
  ('COP', "ConocoPhillips: about 12x earnings, revenue +29%.", "Buybacks", "Oil price drop", (-18,8,24), 'Medium', 'Value'),
 ]
 P[('long','nrg','SGX')] = [
  ('5E2.SI', "Seatrium builds offshore rigs and wind platforms; 35% analyst upside.", "New orders", "Contract delays", (-15,12,28), 'Medium', 'Recovery'),
  ('BN4.SI', "Keppel: energy infrastructure and asset management.", "Asset sales", "Execution", (-12,10,22), 'Medium', 'Value'),
- ('RE4.SI', "Geo Energy: Indonesian coal at about 7x earnings; jumped 9% today.", "Coal prices", "Coal price drop", (-25,8,30), 'Speculative', 'Value'),
- ('5LY.SI', "Marco Polo Marine: offshore vessels, revenue +40% at about 10x earnings.", "Results (Nov)", "Thin trading", (-25,10,35), 'Speculative', 'Growth value'),
+ ('RE4.SI', "Geo Energy: Indonesian coal at about 7x earnings.", "Coal prices", "Coal price drop", (-25,8,30), 'Speculative', 'Value'),
+ ('5LY.SI', "Marco Polo Marine: offshore vessels, revenue +40% at about 12x earnings; jumped 9% on Nov 11.", "Results (Nov)", "Thin trading", (-25,10,35), 'Speculative', 'Growth value'),
  ('5WH.SI', "Rex International is in a long downtrend (-62% this year); no setup.", "None", "Further losses", (-30,-5,20), 'Speculative', 'Avoid'),
 ]
 P[('swing','nrg','US')] = [
- ('MPC', "Marathon Petroleum is oversold (RSI 27); refiners gain when crude falls.", "Refining margins", "Margin drop", (-10,5,16), 'Medium', 'Oversold rebound'),
- ('PSX', "Phillips 66 oversold (RSI 29); also helped by cheaper crude.", "Refining margins", "Margin drop", (-10,5,15), 'Medium', 'Oversold rebound'),
- ('DVN', "Devon rose 2.4% from RSI 29; about 8x earnings, 42% analyst upside.", "Buybacks", "Oil price drop", (-12,4,15), 'Medium', 'Oversold rebound'),
- ('OXY', "Occidental rose 2% on 1.8x volume after results (RSI 29).", "Results follow-through", "Debt; oil price", (-10,4,13), 'Medium', 'Post-earnings'),
- ('FANG', "Diamondback oversold (RSI 30).", "Buybacks", "Oil price drop", (-11,4,13), 'Medium', 'Oversold rebound'),
+ ('MPC', "Marathon Petroleum is oversold (RSI 32); refiners gain when crude falls.", "Refining margins", "Margin drop", (-10,5,16), 'Medium', 'Oversold rebound'),
+ ('PSX', "Phillips 66 oversold (RSI 35); also helped by cheaper crude.", "Refining margins", "Margin drop", (-10,5,15), 'Medium', 'Oversold rebound'),
+ ('DVN', "Devon rose 2.7% from RSI 36; about 8.5x earnings, 38% analyst upside.", "Buybacks", "Oil price drop", (-12,4,15), 'Medium', 'Oversold rebound'),
+ ('OXY', "Occidental oversold (RSI 30) after results.", "Results follow-through", "Debt; oil price", (-10,4,13), 'Medium', 'Post-earnings'),
+ ('FANG', "Diamondback oversold (RSI 34).", "Buybacks", "Oil price drop", (-11,4,13), 'Medium', 'Oversold rebound'),
 ]
 P[('swing','nrg','SGX')] = [
- ('5E2.SI', "Seatrium rose 3.3%.", "Orders", "Delays", (-8,3,10), 'Medium', 'Support'),
- ('BN4.SI', "Keppel rose 3.4%.", "Asset sales", "Execution", (-5,3,8), 'Medium', 'Rebound'),
- ('RE4.SI', "Geo Energy jumped 9.3%.", "Coal prices", "Profit-taking", (-10,2,10), 'Speculative', 'Momentum'),
- ('5LY.SI', "Marco Polo Marine rose 3.8% near lows.", "Results", "Thin trading", (-10,3,12), 'Speculative', 'Support'),
+ ('5E2.SI', "Seatrium flat near support.", "Orders", "Delays", (-8,3,10), 'Medium', 'Support'),
+ ('BN4.SI', "Keppel rose 1.1%.", "Asset sales", "Execution", (-5,3,8), 'Medium', 'Rebound'),
+ ('5LY.SI', "Marco Polo Marine jumped 9.3%.", "Results", "Thin trading", (-10,3,12), 'Speculative', 'Momentum'),
+ ('RE4.SI', "Geo Energy rose 1.9%.", "Coal prices", "Profit-taking", (-10,2,10), 'Speculative', 'Range'),
  ('5WH.SI', "Rex International: no setup.", "None", "Further losses", (-12,-2,8), 'Speculative', 'Avoid'),
 ]
 P[('intraday','nrg','US')] = [
- ('OXY', "Rose 2% on 1.8x volume after results.", "Follow-through", "Iran-deal headlines", (-3,0.3,3), 'Medium', 'Earnings follow-through'),
- ('DVN', "Rose 2.4%.", "Follow-through", "Oil", (-3,0.3,3), 'Medium', 'Momentum check'),
- ('LNG', "Rose 3%.", "Gas exports", "Profit-taking", (-3,0.2,3), 'Medium', 'Momentum check'),
- ('XOM', "Flat; WTI near $85.", "Oil", "More Iran-deal hopes", (-2,0.2,2), 'Medium', 'Range'),
- ('MPC', "RSI 27.", "Cheaper crude", "Margins", (-3,0.4,3), 'Medium', 'Bounce watch'),
+ ('HAL', "Rose 3.2% with oil services.", "Follow-through", "Oil", (-2.5,0.2,2.5), 'Medium', 'Momentum check'),
+ ('DVN', "Rose 2.7%.", "Follow-through", "Oil", (-3,0.3,3), 'Medium', 'Momentum check'),
+ ('LNG', "Rose 2.7%.", "Gas exports", "Profit-taking", (-3,0.2,3), 'Medium', 'Momentum check'),
+ ('XOM', "Rose 0.8%; WTI near $86.", "Oil", "Iran-deal headlines", (-2,0.2,2), 'Medium', 'Range'),
+ ('MPC', "RSI 32.", "Cheaper crude", "Margins", (-3,0.4,3), 'Medium', 'Bounce watch'),
 ]
 P[('intraday','nrg','SGX')] = [
- ('RE4.SI', "Jumped 9.3%.", "Next session", "Profit-taking", (-4,0,3), 'Speculative', 'Follow-through check'),
- ('5E2.SI', "Rose 3.3%.", "Next session", "Profit-taking", (-2,0.2,2), 'Medium', 'Follow-through check'),
- ('BN4.SI', "Rose 3.4%.", "Next session", "Small range", (-1.8,0.2,1.8), 'Medium', 'Follow-through check'),
- ('5LY.SI', "Rose 3.8%.", "Next session", "Thin trading", (-3,0.2,3), 'Speculative', 'Range'),
+ ('5LY.SI', "Jumped 9.3%.", "Next session", "Profit-taking", (-4,0,4), 'Speculative', 'Follow-through check'),
+ ('RE4.SI', "Rose 1.9%.", "Next session", "Small range", (-3,0.2,3), 'Speculative', 'Range'),
+ ('BN4.SI', "Rose 1.1%.", "Next session", "Small range", (-1.6,0.2,1.6), 'Medium', 'Range'),
+ ('5E2.SI', "Flat.", "Next session", "Small range", (-2,0.2,2), 'Medium', 'Range'),
  ('5WH.SI', "Penny stock in a downtrend; avoid.", "None", "Further losses", (-5,-1,4), 'Speculative', 'Avoid'),
 ]
 
 IPO_LIST = [
  # sym, name, ipo_date, ipo_price, sector, status
- ('ANT','Anthropic (Nasdaq: ANT; range $70-78, 825M shares, up to ~$64B; pricing expected week of Nov 16)','2026-11-19',None,'ai','Roadshow'),
+ ('ANT','Anthropic (Nasdaq: ANT; roadshow launched Nov 10, range $70-78, 825M shares, up to ~$64B; pricing expected week of Nov 16)','2026-11-19',None,'ai','Roadshow'),
  ('BIAI','Bitari','2026-11-30',7.00,'ai','Expected'),
  ('FBLLU','Football Manager SPAC','2026-11-23',10.00,'fin','Expected'),
  ('YNTE','Primagrove ($4-6 range)','2026-11-16',None,'fin','Expected'),
- ('VVVV','vVardis ($21-24 range, ~$214M; dental tech; this week)','2026-11-13',None,'hc','Expected'),
- ('WWB','Windward Bio ($16-18 range)','2026-11-13',None,'hc','Expected'),
- ('RZRA','Rezera ($11-13 range, ~$200M)','2026-11-12',None,'hc','Expected'),
+ ('VVVV','vVardis ($21-24 range, ~$214M; dental tech; NYSE, this week)','2026-11-13',None,'hc','Expected'),
+ ('WWB','Windward Bio ($16-18 range, ~$175M; Nasdaq, this week)','2026-11-13',None,'hc','Expected'),
+ ('RZRA','Rezera ($11-13 range, ~$200M; Nasdaq, this week)','2026-11-12',None,'hc','Expected'),
  ('AGLT','Agility Robotics (merger listing with Churchill Capital XI)','2026-11-05',None,'ai','Expected'),
  ('LYCA','Lycia Therapeutics','2026-10-23',18.00,'hc','Listed'),
  ('CTY','City Therapeutics','2026-10-16',18.00,'hc','Listed'),
@@ -342,30 +342,29 @@ IPO_LIST = [
 SERENITY = {'NVDA','SPCX','AXTI','LITE','COHR','NBIS','MU','AVGO','AAOI','AEHR','GLW','SNDK','POET','IREN','TSEM','MRVL','AMD','ARM','INTC','TSM','CRDO'}
 
 X_POSTS = [
+ ('2026-11-11T05:42','CRWV NBIS', "Via search excerpt: reads CoreWeave's results as good news for Nebius and other neoclouds, quoting '10x as much qualified demand as available capacity', strong interest in 2028 capacity and several price rises this year."),
+ ('2026-11-10T10:50','GE', "Via search excerpt: highlights SoftBank's CFO denying it defaulted on turbine orders, as had been claimed online, and says this matches what GE's management has said."),
  ('2026-11-09T15:12','NVDA TSM', "Via tracker: notes Taiwan's index jumped about 5% as AI stocks rebounded, joking that markets were impressed by Jensen Huang's energy."),
  ('2026-11-09T11:28','NVDA', "Via tracker: backs Nvidia and Huang through the personal scrutiny, saying many public figures have faced similar attention."),
- ('2026-11-08T23:52','AMD ARM QCOM LITE IREN', "Via tracker: rounds up executive comments from the selloff and argues AI demand is delayed by how fast data centres can be built, not disappearing."),
  ('2026-11-08T17:35','COHR LITE POET', "Via tracker: calls the 'AI bubble' label lazy. Memory makers with price floors and optical firms near net cash look cheap; leveraged neoclouds and AI-lab valuations are more bubble-prone."),
  ('2026-11-08T01:11','MU', "Via tracker: says old memory contract renegotiations don't apply now, since Micron's new deals carry price floors and binding commitments."),
- ('2026-11-08T00:10','NVDA', "Via tracker: on the CEO/China rumour, says Nvidia wanted China sales anyway, doubts the impact and will wait for more news."),
- ('2026-11-07T22:40','NBIS CRWV IREN', "Via tracker: contrarian on neoclouds; thinks players with contracted capacity and sound financing win if funding and permits tighten."),
- ('2026-11-07T20:23','AAOI', "Via tracker: memory longs went from ~+450% to ~+50-100%; tax-loss harvested some AAOI but remains long and expects a better 2027."),
+ ('2026-11-07T11:36','POET', "Via search excerpt: says the market hit 'extreme dislocation', with POET trading about $98M below its net cash, and argues some bottleneck suppliers keep demand visibility even if hyperscaler capex is cut."),
+ ('2026-11-06T07:24','NBIS SPCX', "Via search excerpt: says everyone is a long-term investor until volatility hits; still thinks Rocket Lab could be the next SpaceX and Nebius the next hyperscaler."),
 ]
 
 EVENTS = [
- ('2026-11-09','AI','Nvidia -5% on CEO probe', "Board-led investigation into reports that Jensen Huang was targeted by foreign intelligence; board says no secrets compromised."),
- ('2026-11-09','Power','Constellation beats and raises', "2026 guide $12.50-12.80. NRG +11% on results and a $4B asset sale."),
- ('2026-11-10','Macro','Hot CPI: +0.4% (core +0.3%)', "Both above forecasts. 10-yr yield ~5.0%; Dec hike odds ~90% (CME, per WSJ). Waller says 50 bp should be considered. S&P -0.4%, Nasdaq -0.7%."),
- ('2026-11-10','AI','Nvidia -5.5% on shareholder lawsuit', "Suit says investors were misled about the CEO's ties to a suspected spy; a report says her network moved $7.5B of Nvidia chips to China. Down 18% in five days."),
- ('2026-11-10','Health','Hims & Hers -16.5%', "Q3 revenue +49% to $890M, but 2026 adjusted EBITDA outlook cut to $257-277M."),
- ('2026-11-10','AI','CoreWeave beats and raises', "Q3 revenue $3.66B; 2026 revenue guide $13.0-13.3B; capex $37-39B. TSMC October sales +60% y/y."),
- ('2026-11-10','Fin','Sea: revenue beat, EPS miss', "Revenue +43% to $8.6B; EPS $0.78 vs $0.97 on higher loan-loss provisions; $1B buyback. Stock -1.5%."),
- ('2026-11-10','SGX','STI +1.5% to 5,259', "AEM +10%, Yangzijiang +5.5% (top STI gainer), OCBC +3.1%, UMS +3.6%."),
- ('2026-11-10','IPO','Anthropic sets IPO range $70-78', "825M shares, up to ~$64B raised and ~$1.4T value at the top. Pricing expected week of Nov 16."),
- ('2026-11-11','Macro','Veterans Day', "US stock market open; bond market closed."),
- ('2026-11-12','Mixed','Nebius, Applied Materials, Nu, Accelevation report', "Rezera IPO ($11-13) expected; Windward Bio ($16-18) and vVardis ($21-24) also this week."),
- ('2026-11-17','AI','Nvidia Q3 results', "The main AI-demand checkpoint, now with a lawsuit and the CEO probe in the background. Klarna also reports."),
- ('2026-11-18','IPO','Anthropic IPO pricing (reported)', "Reported pricing around Nov 18, trading Nov 19 on Nasdaq as ANT; not confirmed by the company."),
+ ('2026-11-10','Macro','Hot CPI: +0.4% (core +0.3%)', "Both above forecasts. 10-yr yield ~5.0%; Dec hike odds ~90% (CME). S&P -0.4%, Nasdaq -0.7%."),
+ ('2026-11-10','AI','Nvidia -5.5% on shareholder lawsuit', "Suit over the CEO's ties to a suspected spy and a report that $7.5B of chips reached China. Down 18% in five days."),
+ ('2026-11-10','AI','CoreWeave beats and raises', "Q3 revenue $3.66B (+168%); 2026 revenue guide $13.0-13.3B; capex $37-39B. TSMC October sales +60% y/y."),
+ ('2026-11-10','IPO','Anthropic launches IPO roadshow', "Range $70-78, 825M shares, up to ~$64B raised and ~$1.4T value at the top."),
+ ('2026-11-11','Macro','AI rally: S&P +1.3%, Nasdaq +1.6%', "S&P 7,619; Nasdaq 25,466 erased its post-election losses. VIX 17.5. Bond market shut for Veterans Day. Fed's Bowman says more hikes may be needed."),
+ ('2026-11-11','AI','CoreWeave +25%; chips, memory and optics rebound', "Nvidia +2.9% to $173.73 despite a Baird downgrade to Neutral; Micron, Sandisk, Seagate, Lumentum up 10%+ midday."),
+ ('2026-11-11','Power','Bloom +16%; Talen signs 750 MW deal', "Talen's seven-year capacity deal is worth ~$100M a year. AI power names rallied with CoreWeave."),
+ ('2026-11-11','SGX','STI +0.6% to 5,290', "Venture +5.2% on a 22% Q3 profit rise (RHB target S$21.97); UMS +9%; DBS +0.9%, OCBC +0.8%."),
+ ('2026-11-12','Mixed','Nebius, Applied Materials, Cisco, Nu, Accelevation report', "Nebius before the open; Applied Materials and Cisco after the close. US jobless claims 8:30 ET. Rezera, Windward Bio and vVardis IPOs expected this week."),
+ ('2026-11-17','AI','Nvidia Q3 results', "The main AI-demand checkpoint, with a lawsuit, the CEO probe and a Baird downgrade in the background. Klarna also reports."),
+ ('2026-11-18','IPO','Anthropic IPO pricing (expected)', "Pricing expected the week of Nov 16, trading on Nasdaq as ANT; exact date not confirmed."),
  ('2026-11-25','SGX','IHH Q3 results', ""),
- ('2026-12-09','Macro','Fed rate decision (Dec 8-9)', "A 25 bp hike is ~90% priced after the hot CPI; ~10% odds of 50 bp."),
+ ('2026-11-26','Macro','US Thanksgiving', "US stock market closed."),
+ ('2026-12-09','Macro','Fed rate decision (Dec 8-9)', "A 25 bp hike is ~90% priced; Goldman and UBS expect another in March."),
 ]
